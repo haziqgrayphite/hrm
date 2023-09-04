@@ -1,9 +1,14 @@
-from django.shortcuts import get_object_or_404
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from .models import CustomUser
 from .serializers import CustomUserSerializer
@@ -11,6 +16,7 @@ from .serializers import CustomUserSerializer
 
 class UserApiView(APIView):
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):
         pk = pk
@@ -30,9 +36,6 @@ class UserApiView(APIView):
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         if serializer.is_valid():
-            hashed_password = make_password(serializer.validated_data['password'])
-            serializer.validated_data['password'] = hashed_password
-
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -61,3 +64,9 @@ class UserApiView(APIView):
         user.delete()
         return Response({'msg': 'User deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
+
+class GoogleLoginView(SocialLoginView):
+    authentication_classes = []
+    adapter_class = GoogleOAuth2Adapter
+    callback_url = 'http://localhost:3000/api/auth/callback/google'
+    client_class = OAuth2Client
