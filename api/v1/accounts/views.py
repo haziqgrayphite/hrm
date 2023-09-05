@@ -3,12 +3,10 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.contrib.auth import get_user_model
 from rest_framework import status
 from .models import CustomUser
 from .serializers import CustomUserSerializer
