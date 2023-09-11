@@ -150,7 +150,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'offline',
+            'access_type': 'online',
         }
     }
 }
@@ -162,9 +162,9 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = True
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),  # Set the access token lifetime as per your requirements
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Set the access token lifetime as per your requirements
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),  # Set the refresh token lifetime as per your requirements
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_REFRESH_LIFETIME_GRACE_PERIOD': timedelta(days=0),
     'SLIDING_TOKEN_TYPES': {
         'access': 'Bearer',
@@ -179,3 +179,5 @@ REST_AUTH = {
     'USE_JWT': True,
     'JWT_AUTH_HTTPONLY': False
 }
+
+
