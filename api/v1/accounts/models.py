@@ -9,6 +9,11 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
+class GrayphiteBaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 class GenderChoices(Enum):
     MALE = 'M'
     FEMALE = 'F'
@@ -108,13 +113,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-
-# class Department(models.Model):
-#     members = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-#
-#     name = models.CharField(max_length=100)
-#
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now=True)
-
