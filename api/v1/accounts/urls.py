@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserApiView, GoogleLoginView
+from .views import UserApiView, GoogleLoginView, ToBeEvaluatedListView
 
 
 urlpatterns = [
@@ -10,6 +10,8 @@ urlpatterns = [
     path('<int:pk>/patch/', UserApiView.as_view(), name='user-patch'),
     path('<int:pk>/delete/', UserApiView.as_view(), name='user-delete'),
     path('api/google-login/', GoogleLoginView.as_view(), name='facebook_login'),
+
+    path('eval', ToBeEvaluatedListView.as_view(), name='evaluation-detail')
 
 
 ]

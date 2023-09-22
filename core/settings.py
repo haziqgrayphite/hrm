@@ -1,7 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -38,7 +37,8 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'dj_rest_auth.registration',
     'rest_framework.authtoken',
-    'corsheaders'
+    'corsheaders',
+    'multiselectfield',
 ]
 
 MIDDLEWARE = [

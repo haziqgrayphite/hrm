@@ -9,6 +9,7 @@ from dj_rest_auth.registration.views import SocialLoginView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 from .models import CustomUser
+from .models import BaseEvaluation
 from .serializers import CustomUserSerializer
 
 
@@ -79,14 +80,29 @@ class GoogleLoginView(SocialLoginView):
         return response
 
 
+class ToBeEvaluatedListView(APIView):
 
+    def get(self, request):
+        evaluator = request.user
+        evaluations = BaseEvaluation.objects.filter(evaluator=evaluator)
+        to_be_evaluated_data = []
 
+        for evaluation in evaluations:
+            to_be_evaluated_users = list(evaluation.evaluatee.all())
 
+            # Include evaluation details for each user
+            for user in to_be_evaluated_users:
+                user_data = {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'created_at': evaluation.created_at,
+                    'review_period_from': evaluation.review_period_from,
+                    'review_period_to': evaluation.review_period_to,
+                    'is_completed': evaluation.is_completed,
+                    'overall_comments': evaluation.overall_comments,
+                }
+                to_be_evaluated_data.append(user_data)
 
-
-
-
-
-
-
+        return Response(to_be_evaluated_data, status=status.HTTP_200_OK)
 

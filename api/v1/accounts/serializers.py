@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, BaseEvaluation
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -22,3 +22,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
+class EvaluationSerializer(serializers.ModelSerializer):
+    # to_be_evaluated_users = CustomUserSerializer(many=True, read_only=True, source='evaluatee')
+
+    class Meta:
+        model = BaseEvaluation
+        fields = '__all__'
