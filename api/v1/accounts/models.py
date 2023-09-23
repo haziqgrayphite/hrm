@@ -7,7 +7,11 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from multiselectfield import MultiSelectField
+
+
+class GrayphiteBaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 class GenderChoices(Enum):
@@ -109,44 +113,3 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def email_user(self, subject, message, from_email=None, **kwargs):
         """Send an email to this user."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-
-class GrayphiteBaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
-score = models.FloatField()
-
-
-class ParameterRating(GrayphiteBaseModel):
-    name = models.CharField(max_length=500)
-    score = models.FloatField()
-
-    def __str__(self):
-        return f"{self.name} - {self.score}"
-
-
-class TechnicalParameter(GrayphiteBaseModel):
-    name = models.CharField(max_length=500, null=True, blank=True)
-    parameter_rating = models.OneToOneField(ParameterRating, on_delete=models.CASCADE, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-
-    def __str__(self):
-        return self.name
-
-
-class BaseEvaluation(models.Model):
-    uuid_id = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
-
-    # evaluator = models.ManyToManyField(CustomUser, related_name="base_evaluation")
-    # evaluatee = models.ManyToManyField(CustomUser, related_name="base_evaluation")
-# technical_parameter = models.ForeignKey(TechnicalParameter, on_delete=models.CASCADE, related_name="base_evaluation")
-#
-#     review_period_from = models.DateField(null=True, blank=True, default=timezone.now())
-#     review_period_to = models.DateField(null=True, blank=True, default=timezone.now())
-#     created_at = models.DateTimeField(default=timezone.now)
-#     is_completed = models.BooleanField(default=False)
-#     overall_comments = models.CharField(blank=True, null=True)
-#
-#     is_active = models.BooleanField(default=True)

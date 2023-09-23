@@ -26,8 +26,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'api.v1.accounts',
-    'api.v1.evaluation',
     'rest_framework_simplejwt',
     "django.contrib.sites",
     "allauth",
@@ -39,6 +37,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'multiselectfield',
+    'api.v1.accounts.apps.AccountsConfig',
+    'api.v1.evaluation.apps.EvaluationConfig',
 ]
 
 MIDDLEWARE = [
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hrm-local',
+        'NAME': 'Hrm-local',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
@@ -126,7 +126,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "accounts.CustomUser"
 
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
@@ -154,7 +153,7 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
-SITE_ID = 1
+SITE_ID = 2
 REST_AUTH = {
     'USE_JWT': True,
 }
@@ -181,3 +180,4 @@ REST_AUTH = {
 }
 
 
+AUTH_USER_MODEL = 'accounts.CustomUser'
