@@ -169,6 +169,7 @@ Thumbs.db
 # Environments Variables
 **/.env
 **/env
+**/venv
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

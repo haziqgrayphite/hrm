@@ -1,8 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
 
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -154,9 +152,6 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 SITE_ID = 2
-REST_AUTH = {
-    'USE_JWT': True,
-}
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = True
 
