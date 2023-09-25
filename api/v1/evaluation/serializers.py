@@ -2,11 +2,6 @@ from rest_framework import serializers
 from .models import Evaluation
 
 
-# class EvaluationSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Evaluation
-#         fields = '__all__'
-
 class EvaluationSerializer(serializers.ModelSerializer):
     evaluator_name = serializers.CharField(source='evaluator.username', read_only=True)
     evaluatee_name = serializers.CharField(source='evaluatee.username', read_only=True)
