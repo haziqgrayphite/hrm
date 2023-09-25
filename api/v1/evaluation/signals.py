@@ -1,32 +1,28 @@
 from django.dispatch import receiver
-from django.utils import timezone
-from django.db.models.signals import post_save
 from .models import Evaluation, BaseEvaluation
+from django.db.models.signals import m2m_changed
 
 
-@receiver(post_save, sender=BaseEvaluation)
-def create_evaluations(sender, instance, created, **kwargs):
-    if created:
-        evaluators = list(instance.evaluators.all())
-        evaluatees = list(instance.evaluatees.all())
-        parameters = list(instance.parameters.all())
-        expiry_days = instance.expiry_days
+@receiver(m2m_changed, sender=BaseEvaluation.parameters.through)
+def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwargs):
+    if action == "post_add" and not reverse:
+
+        evaluators = instance.evaluators.all()
+        evaluatees = instance.evaluatees.all()
+        parameters = instance.parameters.all()
 
         print("Signal handler triggered")
         print(f"Instance: {instance}")
         print(f"Evaluators: {evaluators}")
         print(f"Evaluatees: {evaluatees}")
         print(f"Parameters: {parameters}")
-        print(f"Parameters: {expiry_days}")
 
-        # Create Evaluation instances for each combination of evaluators, evaluatees, and parameters
-        # for evaluator in evaluators:
-        #     for evaluatee in evaluatees:
-        #         for parameter in parameters:
-        #             Evaluation.objects.create(
-        #                 evaluator=evaluator,
-        #                 evaluatee=evaluatee,
-        #                 parameters=parameter,
-        #                 is_active=True,
-        #                 is_evaluated=False,
-        #             )
+        for evaluator in evaluators:
+            for evaluatee in evaluatees:
+                evaluation_instance = Evaluation.objects.create(
+                    evaluator=evaluator,
+                    evaluatee=evaluatee,
+                    is_active=True,
+                    is_evaluated=False
+                )
+                evaluation_instance.parameters.set(parameters)

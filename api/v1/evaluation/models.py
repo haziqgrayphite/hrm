@@ -56,7 +56,7 @@ class BaseEvaluation(GrayphiteBaseModel):
 class Evaluation(GrayphiteBaseModel):
     evaluator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="evaluation_evaluator")
     evaluatee = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="evaluation_evaluatee")
-    parameters = models.ForeignKey(Parameter, on_delete=models.CASCADE, related_name="evaluation_parameters")
+    parameters = models.ManyToManyField(Parameter, related_name="evaluation_parameters")
 
     is_active = models.BooleanField(default=True)
     is_evaluated = models.BooleanField(default=False)

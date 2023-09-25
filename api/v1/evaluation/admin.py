@@ -61,10 +61,16 @@ class EvaluationAdmin(admin.ModelAdmin):
     list_display = [
         'evaluator',
         'evaluatee',
-        'parameters',
+        'display_parameters',
         'is_active',
         'is_evaluated',
     ]
+
+    def display_parameters(self, obj):
+        parameters = obj.parameters.all()
+        return ', '.join([str(parameter.name) for parameter in parameters])
+
+    display_parameters.short_description = 'Parameters'
 
 
 admin.site.register(BaseEvaluation, BaseEvaluationAdmin)
