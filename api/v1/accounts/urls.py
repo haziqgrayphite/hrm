@@ -10,7 +10,4 @@ urlpatterns = [
     path('<int:pk>/patch/', UserApiView.as_view(), name='user-patch'),
     path('<int:pk>/delete/', UserApiView.as_view(), name='user-delete'),
     path('api/google-login/', GoogleLoginView.as_view(), name='facebook_login'),
-
-
-
 ]

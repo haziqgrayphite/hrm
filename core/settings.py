@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-+wp*9)3(#-f=7v7zh&o5q4@gyz@i4otywk*mug*317zwbns1dd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Hrm-local',
+        'NAME': 'hrmcc',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
@@ -147,7 +147,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'email',
         ],
         'AUTH_PARAMS': {
-            'access_type': 'online',
+            'access_type': 'offline',
         }
     }
 }

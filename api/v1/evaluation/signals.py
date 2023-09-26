@@ -11,12 +11,6 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
         evaluatees = instance.evaluatees.all()
         parameters = instance.parameters.all()
 
-        print("Signal handler triggered")
-        print(f"Instance: {instance}")
-        print(f"Evaluators: {evaluators}")
-        print(f"Evaluatees: {evaluatees}")
-        print(f"Parameters: {parameters}")
-
         for evaluator in evaluators:
             for evaluatee in evaluatees:
                 evaluation_instance = Evaluation.objects.create(

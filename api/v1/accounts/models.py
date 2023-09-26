@@ -9,11 +9,6 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
-class GrayphiteBaseModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-
 class GenderChoices(Enum):
     MALE = 'M'
     FEMALE = 'F'

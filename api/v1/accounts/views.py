@@ -74,7 +74,7 @@ class GoogleLoginView(SocialLoginView):
         user = self.user  # Get the user from the response
         custom_user = CustomUser.objects.get(pk=user.pk)  # Adjust this to fetch your custom user
         response.data['gender'] = custom_user.gender
-        response.data['role'] = custom_user.role
+        response.data['user']['role'] = custom_user.role
 
         return response
 
