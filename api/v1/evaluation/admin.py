@@ -39,14 +39,8 @@ class ParameterAdmin(admin.ModelAdmin):
         'is_active',
         'name',
         'description',
-        'display_parameter_ratings'
+        'parameter_rating'
     ]
-
-    def display_parameter_ratings(self, obj):
-        parameter_ratings = obj.parameter_rating.all()
-        return ', '.join([str(parameter_rating.name) for parameter_rating in parameter_ratings])
-
-    display_parameter_ratings.short_description = 'Parameter Ratings'
 
 
 class ParameterRatingAdmin(admin.ModelAdmin):
