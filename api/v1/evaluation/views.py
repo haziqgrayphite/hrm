@@ -1,12 +1,12 @@
 from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.views import APIView
-from .models import Evaluation, Parameter, ParameterRating
-from .serializers import ParameterSerializer, ParameterRatingSerializer, EvaluationSerializer
+from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
+from .serializers import ParameterSerializer, ParameterRatingSerializer, EvaluationSerializer, EvaluationScoreSerializer
 
 
 class GeneralAPIView(APIView):
     def get(self, request):
-
         parameters = Parameter.objects.filter(is_active=True)
         parameter_ratings = ParameterRating.objects.filter(is_active=True)
 
@@ -24,7 +24,6 @@ class GeneralAPIView(APIView):
 class EvaluationAPIView(APIView):
 
     def get(self, request, evaluator_id=None):
-
         user = request.user
 
         evaluations = Evaluation.objects.filter(evaluator=user) | Evaluation.objects.filter(evaluatee=user)

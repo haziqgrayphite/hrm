@@ -20,7 +20,6 @@ class Parameter(models.Model):
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=300, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
-    parameter_rating = models.OneToOneField(ParameterRating, on_delete=models.CASCADE, related_name="parameter_parameter_rating")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -30,7 +29,6 @@ class Parameter(models.Model):
 
 
 class BaseEvaluation(models.Model):
-
     evaluators = models.ManyToManyField(CustomUser, related_name="base_evaluation_evaluators")
     evaluatees = models.ManyToManyField(CustomUser, related_name="base_evaluation_evaluatees")
     parameters = models.ManyToManyField(Parameter, related_name="base_evaluation_parameter")
@@ -64,6 +62,18 @@ class Evaluation(models.Model):
     evaluator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="evaluation_evaluator")
     evaluatee = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="evaluation_evaluatee")
     parameters = models.ManyToManyField(Parameter, related_name="evaluation_parameters")
+
+    is_active = models.BooleanField(default=True)
+    is_evaluated = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class EvaluationScore(models.Model):
+    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE, related_name="evaluation_score")
+    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, related_name="evaluation_scores")
+    parameter_rating = models.ForeignKey(ParameterRating, on_delete=models.CASCADE, related_name="evaluation_scores")
 
     is_active = models.BooleanField(default=True)
     is_evaluated = models.BooleanField(default=False)

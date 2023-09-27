@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Evaluation, Parameter, ParameterRating
+from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
 from api.v1.accounts.serializers import CustomUserSerializer
 
 
@@ -15,14 +15,27 @@ class ParameterSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'parameter_rating')
 
 
+class EvaluationScoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EvaluationScore
+        fields = (
+            'evaluation',
+            'parameter',
+            'parameter_rating',
+            'is_active',
+            'is_evaluated',
+        )
+
+
 class EvaluationSerializer(serializers.ModelSerializer):
     evaluator = CustomUserSerializer()
     evaluatee = CustomUserSerializer()
+    evaluation_scores = EvaluationScoreSerializer(many=True, read_only=True, source='evaluation_score')
 
     class Meta:
         model = Evaluation
         fields = (
-            'id', 'evaluator', 'evaluatee', 'parameters', 'is_active', 'is_evaluated')
+            'id', 'evaluator', 'evaluatee', 'parameters', 'is_active', 'is_evaluated', 'evaluation_scores')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -30,3 +43,5 @@ class EvaluationSerializer(serializers.ModelSerializer):
         representation['evaluatee'] = CustomUserSerializer(instance.evaluatee).data
         representation['parameters'] = [param.id for param in instance.parameters.all()]
         return representation
+
+

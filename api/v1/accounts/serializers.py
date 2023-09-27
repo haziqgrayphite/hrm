@@ -5,7 +5,7 @@ from .models import CustomUser
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        exclude = ('password',)
+        exclude = ('password', 'created_at', 'updated_at')
 
     def create(self, validated_data):
         user = CustomUser(
