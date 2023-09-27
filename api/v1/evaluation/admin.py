@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from .models import BaseEvaluation, CustomUser, Parameter, ParameterRating, Evaluation
+from .models import BaseEvaluation, CustomUser, Parameter, ParameterRating, Evaluation, EvaluationScore
 
 
 class EvaluationForm(forms.ModelForm):
@@ -54,19 +54,27 @@ class EvaluationAdmin(admin.ModelAdmin):
     list_display = [
         'evaluator',
         'evaluatee',
-        'display_parameters',
+        'display_scores',
         'is_active',
         'is_evaluated',
     ]
 
-    def display_parameters(self, obj):
-        parameters = obj.parameters.all()
-        return ', '.join([str(parameter.name) for parameter in parameters])
+    def display_scores(self, obj):
+        evaluation_scores = obj.evaluation_score.all()
+        return ', '.join([str(score) for score in evaluation_scores])
 
-    display_parameters.short_description = 'Parameters'
+    display_scores.short_description = 'Scores'
+
+
+class EvaluationScoreAdmin(admin.ModelAdmin):
+    list_display = [
+         'parameter',
+         'parameter_rating'
+    ]
 
 
 admin.site.register(BaseEvaluation, BaseEvaluationAdmin)
 admin.site.register(Parameter, ParameterAdmin)
 admin.site.register(ParameterRating, ParameterRatingAdmin)
+admin.site.register(EvaluationScore, EvaluationScoreAdmin)
 admin.site.register(Evaluation, EvaluationAdmin)
