@@ -31,6 +31,3 @@ class EvaluationAPIView(APIView):
         serializer = EvaluationSerializer(evaluations, many=True, context={'request': request})
 
         return Response(serializer.data)
-
-
-
