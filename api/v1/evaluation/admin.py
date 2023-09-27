@@ -39,7 +39,6 @@ class ParameterAdmin(admin.ModelAdmin):
         'is_active',
         'name',
         'description',
-        'parameter_rating'
     ]
 
 

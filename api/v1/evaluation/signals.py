@@ -11,12 +11,15 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
         evaluatees = instance.evaluatees.all()
         parameters = instance.parameters.all()
 
-        for evaluator in evaluators:
-            for evaluatee in evaluatees:
-                evaluation_instance = Evaluation.objects.create(
-                    evaluator=evaluator,
-                    evaluatee=evaluatee,
-                    is_active=True,
-                    is_evaluated=False
-                )
-                evaluation_instance.parameters.set(parameters)
+
+
+        # for evaluator in evaluators:
+        #     for evaluatee in evaluatees:
+        #         evaluation_instance = Evaluation.objects.create(
+        #             evaluator=evaluator,
+        #             evaluatee=evaluatee,
+        #             is_active=True,
+        #             is_evaluated=False,
+        #             evaluation_score=...
+        #         )
+        #         evaluation_instance.parameters.set(parameters)
