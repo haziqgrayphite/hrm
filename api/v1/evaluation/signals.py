@@ -25,7 +25,7 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
                     is_active=True,
                     is_evaluated=False,
                 )
-                # evaluation_instance.evaluation_parameters.set(evaluation_scores)
+
                 evaluation_instance.parameters.set(parameters)
                 evaluations.append(evaluation_instance)
 
@@ -37,12 +37,3 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
                     parameter=_parameter,
                     parameter_rating=default_parameter_rating
                 )
-
-
-
-
-
-
-
-
-
