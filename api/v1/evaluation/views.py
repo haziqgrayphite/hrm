@@ -27,7 +27,7 @@ class GeneralAPIView(APIView):
         return Response(response_data)
 
 
-class EvaluationAPIView(APIView):
+class PendingEvaluationAPIView(APIView):
 
     def get(self, request):
 
@@ -50,6 +50,34 @@ class EvaluationAPIView(APIView):
 
         else:
             evaluations = Evaluation.objects.filter(is_evaluated=False)
+            serializer = EvaluationSerializer(evaluations, many=True)
+
+        return Response(serializer.data)
+
+
+class CompletedEvaluationAPIView(APIView):
+
+    def get(self, request):
+
+        evaluator_id = request.data.get('evaluator_id')
+        evaluatee_id = request.data.get('evaluatee_id')
+
+        if evaluator_id:
+
+            evaluations = Evaluation.objects.filter(
+                Q(evaluator=evaluator_id) & Q(is_evaluated=True)
+            )
+            serializer = EvaluationSerializer(evaluations, many=True)
+
+        elif evaluatee_id:
+
+            evaluations = Evaluation.objects.filter(
+                Q(evaluatee=evaluatee_id) & Q(is_evaluated=True)
+            )
+            serializer = EvaluationSerializer(evaluations, many=True)
+
+        else:
+            evaluations = Evaluation.objects.filter(is_evaluated=True)
             serializer = EvaluationSerializer(evaluations, many=True)
 
         return Response(serializer.data)
