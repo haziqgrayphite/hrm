@@ -28,7 +28,39 @@ class EvaluationForm(forms.ModelForm):
 
 class BaseEvaluationAdmin(admin.ModelAdmin):
     form = EvaluationForm
+    list_display = [
+        'get_evaluators',
+        'get_evaluatees',
+        'get_parameters',
+        'valid_from',
+        'valid_until',
+        'comment',
+        'expiry_days',
+        'is_active',
+        'is_expired',
+        'is_completed',
+        'is_expirable'
+        ]
     exclude = ('is_completed', 'overall_comments', 'ratings', 'valid_until')
+
+    def get_parameters(self, obj):
+        parameters = obj.parameters.all()
+        parameter_names = [parameter.name for parameter in parameters]
+        return parameter_names
+
+    get_parameters.short_description = 'Parameters'
+
+    def get_evaluators(self, obj):
+        evaluators = obj.evaluators.all()
+        return [evaluator.username for evaluator in evaluators]
+
+    get_evaluators.short_description = 'Evaluators'
+
+    def get_evaluatees(self, obj):
+        evaluatees = obj.evaluatees.all()
+        return [evaluatee.username for evaluatee in evaluatees]
+
+    get_evaluatees.short_description = 'Evaluatees'
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
@@ -46,7 +78,7 @@ class ParameterRatingAdmin(admin.ModelAdmin):
     list_display = [
         'is_active',
         'name',
-        'score'
+        'score',
     ]
 
 
@@ -54,22 +86,25 @@ class EvaluationAdmin(admin.ModelAdmin):
     list_display = [
         'evaluator',
         'evaluatee',
-        'display_scores',
+        'get_parameters',
         'is_active',
         'is_evaluated',
     ]
 
-    def display_scores(self, obj):
-        evaluation_scores = obj.evaluation_score.all()
-        return ', '.join([str(score) for score in evaluation_scores])
+    def get_parameters(self, obj):
+        parameters = obj.parameters.all()
+        return ', '.join([parameter.name for parameter in parameters])
 
-    display_scores.short_description = 'Scores'
+    get_parameters.short_description = 'Parameters'
 
 
 class EvaluationScoreAdmin(admin.ModelAdmin):
     list_display = [
-         'parameter',
-         'parameter_rating'
+        'evaluation',
+        'parameter',
+        'parameter_rating',
+        'is_active',
+        'is_evaluated'
     ]
 
 

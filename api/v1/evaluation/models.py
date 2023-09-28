@@ -73,7 +73,7 @@ class Evaluation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Evaluation {self.id} by {self.evaluator} for {self.evaluatee}"
+        return f"{self.evaluator} -- {self.evaluatee}"
 
 
 class EvaluationScore(models.Model):
