@@ -69,6 +69,9 @@ class Evaluation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Evaluation {self.id} by {self.evaluator} for {self.evaluatee}"
+
 
 class EvaluationScore(models.Model):
     evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE, related_name="evaluation_score")
@@ -80,3 +83,6 @@ class EvaluationScore(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"EvaluationScore {self.id} - {self.parameter_rating}"
