@@ -1,14 +1,18 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from django.db.models import Q
 from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
-from .serializers import (ParameterSerializer, ParameterRatingSerializer, EvaluationSerializer
-                          , EvaluationScoreUpdateSerializer)
+from .serializers import (
+    ParameterSerializer,
+    ParameterRatingSerializer,
+    EvaluationSerializer,
+    EvaluationScoreUpdateSerializer,
+)
 
 
 class GeneralAPIView(APIView):
     def get(self, request):
-
         parameters = Parameter.objects.filter(is_active=True)
         parameter_ratings = ParameterRating.objects.filter(is_active=True)
 
@@ -25,52 +29,62 @@ class GeneralAPIView(APIView):
 
 class EvaluationAPIView(APIView):
 
-    def get(self, request, evaluator_id=None):
+    def get(self, request):
 
-        user = request.user
+        evaluator_id = request.data.get('evaluator_id')
+        evaluatee_id = request.data.get('evaluatee_id')
 
-        evaluations = Evaluation.objects.filter(evaluator=user) | Evaluation.objects.filter(evaluatee=user)
-        evaluations = evaluations.filter(is_evaluated=False)
-        serializer = EvaluationSerializer(evaluations, many=True, context={'request': request})
+        if evaluator_id:
+
+            evaluations = Evaluation.objects.filter(
+                Q(evaluator=evaluator_id) & Q(is_evaluated=False)
+            )
+            serializer = EvaluationSerializer(evaluations, many=True)
+
+        elif evaluatee_id:
+
+            evaluations = Evaluation.objects.filter(
+                Q(evaluatee=evaluatee_id) & Q(is_evaluated=False)
+            )
+            serializer = EvaluationSerializer(evaluations, many=True)
+
+        else:
+            evaluations = Evaluation.objects.filter(is_evaluated=False)
+            serializer = EvaluationSerializer(evaluations, many=True)
 
         return Response(serializer.data)
 
 
 class UpdateEvaluationScores(APIView):
-    def put(self, request, evaluation_id):
-
+    def put(self, request):
         try:
-
             evaluation_scores_data = request.data.get('evaluation_scores', [])
-            evaluation = Evaluation.objects.get(id=evaluation_id)
+
+            if evaluation_scores_data:
+                first_data = evaluation_scores_data[0]
+                evaluation_id = first_data.get('evaluation_id')
+                evaluation = Evaluation.objects.get(id=evaluation_id)
 
             for data in evaluation_scores_data:
-
                 parameter_id = data['parameter']
                 parameter_rating = data['parameter_rating']
 
                 try:
-
                     evaluation_score = EvaluationScore.objects.get(evaluation=evaluation, parameter_id=parameter_id)
                     serializer = EvaluationScoreUpdateSerializer(evaluation_score, data=data, partial=True)
 
                     if serializer.is_valid():
-
                         serializer.save()
                         evaluation_score.is_evaluated = True
                         evaluation_score.save()
-
                     else:
-
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
                 except EvaluationScore.DoesNotExist:
-
-                    return Response(f"Parameter with ID {parameter_id} not found for this evaluation.",
-                                    status=status.HTTP_404_NOT_FOUND)
+                    msg = f"Parameter with ID {parameter_id} not found for this evaluation."
+                    return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
 
             if all(evaluation_score.is_evaluated for evaluation_score in evaluation.evaluation_score.all()):
-
                 evaluation.is_evaluated = True
                 evaluation.save()
 
@@ -79,5 +93,5 @@ class UpdateEvaluationScores(APIView):
             return Response({'message': msg}, status=status.HTTP_201_CREATED)
 
         except Evaluation.DoesNotExist:
-
-            return Response("Evaluation not found", status=status.HTTP_404_NOT_FOUND)
+            msg = "Evaluation not found"
+            return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
