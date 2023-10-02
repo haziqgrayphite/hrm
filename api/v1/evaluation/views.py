@@ -85,6 +85,7 @@ class CompletedEvaluationAPIView(APIView):
 
 class UpdateEvaluationScores(APIView):
     def put(self, request):
+
         try:
             evaluation_scores_data = request.data.get('evaluation_scores', [])
 
@@ -95,7 +96,7 @@ class UpdateEvaluationScores(APIView):
 
             for data in evaluation_scores_data:
                 parameter_id = data['parameter']
-                parameter_rating = data['parameter_rating']
+                comments = data.get('comments', '')
 
                 try:
                     evaluation_score = EvaluationScore.objects.get(evaluation=evaluation, parameter_id=parameter_id)
@@ -112,11 +113,19 @@ class UpdateEvaluationScores(APIView):
                     msg = f"Parameter with ID {parameter_id} not found for this evaluation."
                     return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
 
+                try:
+                    parameter = Parameter.objects.get(id=parameter_id)
+                    parameter.comments = comments
+                    parameter.save()
+                except Parameter.DoesNotExist:
+                    msg = f"Parameter with ID {parameter_id} not found."
+                    return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
+
             if all(evaluation_score.is_evaluated for evaluation_score in evaluation.evaluation_score.all()):
                 evaluation.is_evaluated = True
                 evaluation.save()
 
-            msg = "Parameter ratings and is_evaluated flag updated successfully."
+            msg = "Parameter ratings and comments updated successfully."
 
             return Response({'message': msg}, status=status.HTTP_201_CREATED)
 
