@@ -12,7 +12,7 @@ class ParameterRatingSerializer(serializers.ModelSerializer):
 class ParameterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Parameter
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'comments')
 
 
 class EvaluationScoreSerializer(serializers.ModelSerializer):

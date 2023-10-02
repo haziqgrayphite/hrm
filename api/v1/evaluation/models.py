@@ -20,6 +20,7 @@ class Parameter(models.Model):
     is_active = models.BooleanField(default=True)
     name = models.CharField(max_length=300, null=True, blank=True)
     description = models.CharField(max_length=500, null=True, blank=True)
+    comments = models.CharField(max_length=500, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
