@@ -29,7 +29,6 @@ class Menu(models.Model):
         return self.name
 
 
-# Meal Model
 class Meal(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True, blank=True, related_name="meals")
     attendees = models.ManyToManyField(CustomUser, related_name="meals_attending")
