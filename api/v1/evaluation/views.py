@@ -91,7 +91,7 @@ class UpdateEvaluationScores(APIView):
 
             if evaluation_scores_data:
                 first_data = evaluation_scores_data[0]
-                evaluation_id = first_data.get('evaluation_id')
+                evaluation_id = first_data.get('evaluation')
                 evaluation = Evaluation.objects.get(id=evaluation_id)
 
             for data in evaluation_scores_data:
