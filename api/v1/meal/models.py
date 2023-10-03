@@ -6,7 +6,7 @@ from api.v1.accounts.models import CustomUser
 class Vendor(models.Model):
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length=255)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -17,10 +17,10 @@ class Vendor(models.Model):
 
 
 class Menu(models.Model):
+    meals = models.ManyToManyField('Meal', related_name='menus')
+
     name = models.CharField(max_length=255)
     description = models.TextField()
-
-    meals = models.ManyToManyField('Meal', related_name='menus')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,15 +31,15 @@ class Menu(models.Model):
 
 # Meal Model
 class Meal(models.Model):
+    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True, blank=True, related_name="meals")
+    attendees = models.ManyToManyField(CustomUser, related_name="meals_attending")
+
     name = models.CharField(max_length=255)
     description = models.TextField()
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default="15:00")
     employee_wants_food = models.BooleanField(default=True)
     cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True, blank=True, related_name="meals")
-    attendees = models.ManyToManyField(CustomUser, related_name="meals_attending")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
