@@ -3,24 +3,11 @@ from django.utils import timezone
 from api.v1.accounts.models import CustomUser
 
 
-class Address(models.Model):
-    street_address = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
-    postal_code = models.CharField(max_length=10)
-
-    def __str__(self):
-        return f"{self.street_address}, {self.city}, {self.state} {self.postal_code}"
-
-
-# Vendor Model
 class Vendor(models.Model):
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15)
-
     email = models.EmailField()
-
-    address = models.ForeignKey(Address, on_delete=models.CASCADE, related_name='vendors')
+    address = models.CharField(max_length=255)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -46,19 +33,16 @@ class Menu(models.Model):
 class Meal(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-
     date = models.DateField(default=timezone.now)
     time = models.TimeField(default="15:00")
-
     employee_wants_food = models.BooleanField(default=True)
+    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True, blank=True, related_name="meals")
-    cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    attendees = models.ManyToManyField(CustomUser, related_name="meals_attending")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    attendees = models.ManyToManyField(CustomUser, related_name="meals_attending")
 
     def __str__(self):
         return self.name
