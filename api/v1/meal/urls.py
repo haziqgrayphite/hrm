@@ -32,6 +32,5 @@ urlpatterns = [
 
     path('meal-reviews/', MealReviewAPIView.as_view(), name='meal-review-list'),
     path('meal-reviews/post/', MealReviewAPIView.as_view(), name='meal-review-post'),
-    # path('meal-reviews/<int:pk>/', MealReviewAPIView.as_view(), name='meal-review-update'),
 
 ]

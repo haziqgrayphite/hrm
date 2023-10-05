@@ -9,16 +9,19 @@ class VendorAPIView(APIView):
 
     def get(self, request, pk=None):
 
-        if pk is not None:
+        if pk:
             try:
                 vendor = Vendor.objects.get(pk=pk)
                 serializer = VendorSerializer(vendor)
+
                 return Response(serializer.data)
+
             except Vendor.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         vendors = Vendor.objects.all()
         serializer = VendorSerializer(vendors, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
@@ -27,6 +30,7 @@ class VendorAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -39,6 +43,7 @@ class VendorAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Complete data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -51,6 +56,7 @@ class VendorAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -60,6 +66,7 @@ class VendorAPIView(APIView):
         vendor = Vendor.objects.get(pk=pk)
         vendor.delete()
         msg = "Delete vendor successfully."
+
         return Response({'msg': msg}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -67,16 +74,19 @@ class MealAPIView(APIView):
 
     def get(self, request, pk=None):
 
-        if pk is not None:
+        if pk:
             try:
                 meal = Meal.objects.get(pk=pk)
                 serializer = MealSerializer(meal)
+
                 return Response(serializer.data)
+
             except Meal.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         meals = Meal.objects.all()
         serializer = MealSerializer(meals, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
@@ -85,6 +95,7 @@ class MealAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -97,6 +108,7 @@ class MealAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -109,6 +121,7 @@ class MealAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -118,6 +131,7 @@ class MealAPIView(APIView):
         meal = Meal.objects.get(pk=pk)
         meal.delete()
         msg = "Delete meal successfully."
+
         return Response({'msg': msg}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -125,16 +139,19 @@ class MenuAPIView(APIView):
 
     def get(self, request, pk=None):
 
-        if pk is not None:
+        if pk:
             try:
                 menu = Menu.objects.get(pk=pk)
                 serializer = MenuSerializer(menu)
+
                 return Response(serializer.data)
+
             except Menu.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         menus = Menu.objects.all()
         serializer = MenuSerializer(menus, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
@@ -143,6 +160,7 @@ class MenuAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -155,6 +173,7 @@ class MenuAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -167,6 +186,7 @@ class MenuAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -176,6 +196,7 @@ class MenuAPIView(APIView):
         menu = Menu.objects.get(pk=pk)
         menu.delete()
         msg = "Delete menu successfully."
+
         return Response({'msg': msg}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -183,16 +204,19 @@ class ReviewAPIView(APIView):
 
     def get(self, request, pk=None):
 
-        if pk is not None:
+        if pk:
             try:
                 review = Review.objects.get(pk=pk)
                 serializer = ReviewSerializer(review)
+
                 return Response(serializer.data)
+
             except Review.DoesNotExist:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
         reviews = Review.objects.all()
         serializer = ReviewSerializer(reviews, many=True)
+
         return Response(serializer.data)
 
     def post(self, request):
@@ -201,6 +225,7 @@ class ReviewAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -213,6 +238,7 @@ class ReviewAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -225,6 +251,7 @@ class ReviewAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
+
             return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -234,6 +261,7 @@ class ReviewAPIView(APIView):
         review = Review.objects.get(pk=pk)
         review.delete()
         msg = "Delete review successfully."
+
         return Response({'msg': msg}, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -259,6 +287,7 @@ class MealReviewAPIView(APIView):
             if review_serializer.is_valid():
                 review_serializer.save()
                 msg = "MealReview updated successfully."
+
                 return Response({'msg': msg}, status=status.HTTP_200_OK)
             else:
                 return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
