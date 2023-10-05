@@ -7,7 +7,7 @@ from .serializers import VendorSerializer, MealSerializer, MenuSerializer, Revie
 
 class VendorAPIView(APIView):
 
-    def get(self, pk=None):
+    def get(self, request, pk=None):
 
         if pk is not None:
             try:
@@ -247,22 +247,35 @@ class MealReviewAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
 
-            user_id = request.data.get('user')
-            meal_id = request.data.get('meal')
-            review_data = request.data.get('review')
+        user_id = request.data.get('user')
+        meal_id = request.data.get('meal')
+        review_data = request.data.get('review')
 
-            review_serializer = ReviewSerializer(data=review_data)
+        existing_review = MealReview.objects.filter(user_id=user_id, meal_id=meal_id).first()
+
+        if existing_review:
+            review_serializer = ReviewSerializer(existing_review.review, data=review_data)
 
             if review_serializer.is_valid():
-                review = review_serializer.save()
+                review_serializer.save()
+                msg = "MealReview updated successfully."
+                return Response({'msg': msg}, status=status.HTTP_200_OK)
             else:
                 return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            meal_review = MealReview.objects.create(
-                user_id=user_id,
-                meal_id=meal_id,
-                review=review
-            )
-            msg = "MealReview created successfully."
+        review_serializer = ReviewSerializer(data=review_data)
 
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+        if review_serializer.is_valid():
+            review = review_serializer.save()
+        else:
+            return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        meal_review = MealReview.objects.create(
+            user_id=user_id,
+            meal_id=meal_id,
+            review=review
+        )
+
+        msg = "MealReview created successfully."
+
+        return Response({'msg': msg}, status=status.HTTP_201_CREATED)

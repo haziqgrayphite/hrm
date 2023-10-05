@@ -34,4 +34,4 @@ class MealReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MealReview
-        fields = ('user', 'meal', 'review')
+        fields = '__all__'
