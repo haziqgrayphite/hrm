@@ -263,5 +263,6 @@ class MealReviewAPIView(APIView):
                 meal_id=meal_id,
                 review=review
             )
+            msg = "MealReview created successfully."
 
-            return Response({'message': 'MealReview created successfully'}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
