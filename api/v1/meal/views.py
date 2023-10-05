@@ -39,7 +39,7 @@ class VendorAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Complete data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -51,7 +51,7 @@ class VendorAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,6 +64,7 @@ class VendorAPIView(APIView):
 
 
 class MealAPIView(APIView):
+
     def get(self, request, pk=None):
 
         if pk is not None:
@@ -96,7 +97,7 @@ class MealAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +109,7 @@ class MealAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -121,6 +122,7 @@ class MealAPIView(APIView):
 
 
 class MenuAPIView(APIView):
+
     def get(self, request, pk=None):
 
         if pk is not None:
@@ -153,7 +155,7 @@ class MenuAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -165,7 +167,7 @@ class MenuAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -178,6 +180,7 @@ class MenuAPIView(APIView):
 
 
 class ReviewAPIView(APIView):
+
     def get(self, request, pk=None):
 
         if pk is not None:
@@ -210,7 +213,7 @@ class ReviewAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -222,7 +225,7 @@ class ReviewAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             msg = "Partial data updated successfully."
-            return Response({'msg': msg}, status=status.HTTP_201_CREATED)
+            return Response({'msg': msg}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -235,6 +238,7 @@ class ReviewAPIView(APIView):
 
 
 class MealReviewAPIView(APIView):
+
     def get(self, request):
 
         meal_reviews = MealReview.objects.all()
