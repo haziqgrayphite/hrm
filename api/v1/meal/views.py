@@ -6,6 +6,7 @@ from .serializers import VendorSerializer, MealSerializer, MenuSerializer, Revie
 
 
 class VendorAPIView(APIView):
+
     def get(self, pk=None):
 
         if pk is not None:
