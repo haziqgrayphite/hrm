@@ -267,7 +267,17 @@ class ReviewAPIView(APIView):
 
 class MealReviewAPIView(APIView):
 
-    def get(self, request):
+    def get(self, request, pk=None):
+
+        if pk:
+            try:
+                meal_review = MealReview.objects.get(pk=pk)
+                serializer = MealReviewSerializer(meal_review)
+
+                return Response(serializer.data)
+
+            except meal_review.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
         meal_reviews = MealReview.objects.all()
         serializer = MealReviewSerializer(meal_reviews, many=True)
