@@ -281,6 +281,7 @@ class MealReviewAPIView(APIView):
 
         meal_reviews = MealReview.objects.all()
         serializer = MealReviewSerializer(meal_reviews, many=True)
+
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
