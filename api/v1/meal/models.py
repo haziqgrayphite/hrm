@@ -65,3 +65,6 @@ class MealReview(models.Model):
 
     def __str__(self):
         return f"MealReview by {self.user} for {self.meal}"
+
+    class Meta:
+        unique_together = ('user', 'meal')
