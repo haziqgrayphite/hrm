@@ -67,6 +67,8 @@ class Evaluation(models.Model):
     evaluatee = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="evaluation_evaluatee")
     parameters = models.ManyToManyField(Parameter, related_name="evaluation_parameters")
 
+    expiry_days = models.IntegerField(default=7, blank=True, null=True)
+
     is_active = models.BooleanField(default=True)
     is_evaluated = models.BooleanField(default=False)
 

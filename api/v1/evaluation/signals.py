@@ -11,8 +11,12 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
         evaluatees = instance.evaluatees.all()
         parameters = instance.parameters.all()
 
-        default_parameter_rating, _ = ParameterRating.objects.get_or_create(name="Default",
-                                                                            defaults={"score": 0})
+        expiry_days = instance.expiry_days
+
+        default_parameter_rating, _ = ParameterRating.objects.get_or_create(
+            name="Default",
+            defaults={"score": 0}
+        )
         evaluations = []
 
         for evaluator in evaluators:
@@ -24,6 +28,7 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
                     evaluatee=evaluatee,
                     is_active=True,
                     is_evaluated=False,
+                    expiry_days=expiry_days
                 )
 
                 evaluation_instance.parameters.set(parameters)
