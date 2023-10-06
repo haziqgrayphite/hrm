@@ -60,8 +60,8 @@ class CompletedEvaluationAPIView(APIView):
 
     def get(self, request):
 
-        evaluator_id = request.data.get('evaluator_id')
-        evaluatee_id = request.data.get('evaluatee_id')
+        evaluator_id = request.query_params.get('evaluator_id')
+        evaluatee_id = request.query_params.get('evaluatee_id')
 
         if evaluator_id:
 
