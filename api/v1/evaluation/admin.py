@@ -88,8 +88,13 @@ class EvaluationAdmin(admin.ModelAdmin):
         'evaluator',
         'evaluatee',
         'get_parameters',
+        'expiry_days',
+        'comment',
         'is_active',
         'is_evaluated',
+        'is_expired',
+        'is_completed',
+        'is_expirable'
     ]
 
     def get_parameters(self, obj):

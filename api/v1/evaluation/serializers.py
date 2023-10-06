@@ -40,8 +40,12 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'evaluatee',
             'parameters',
             'expiry_days',
+            'comment',
             'is_active',
             'is_evaluated',
+            'is_expired',
+            'is_completed',
+            'is_expirable',
             'evaluation_scores'
         )
 
