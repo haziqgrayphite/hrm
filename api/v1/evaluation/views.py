@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from django.utils import timezone
 from django.db.models import Q
 from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
 from .serializers import (
@@ -92,7 +93,16 @@ class UpdateEvaluationScores(APIView):
             if evaluation_scores_data:
                 first_data = evaluation_scores_data[0]
                 evaluation_id = first_data.get('evaluation')
+                evaluation_comment = first_data.get('evaluation_comment')
                 evaluation = Evaluation.objects.get(id=evaluation_id)
+
+                current_datetime = timezone.now()
+
+                if evaluation.valid_until <= current_datetime:
+                    evaluation.is_expired = True
+                    msg = "Evaluation is expired and cannot be updated."
+
+                    return Response({'message': msg}, status=status.HTTP_400_BAD_REQUEST)
 
             for data in evaluation_scores_data:
                 parameter_id = data['parameter']
@@ -111,6 +121,7 @@ class UpdateEvaluationScores(APIView):
 
                 except EvaluationScore.DoesNotExist:
                     msg = f"Parameter with ID {parameter_id} not found for this evaluation."
+
                     return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
 
                 try:
@@ -119,10 +130,13 @@ class UpdateEvaluationScores(APIView):
                     parameter.save()
                 except Parameter.DoesNotExist:
                     msg = f"Parameter with ID {parameter_id} not found."
+
                     return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
 
             if all(evaluation_score.is_evaluated for evaluation_score in evaluation.evaluation_score.all()):
                 evaluation.is_evaluated = True
+                evaluation.is_completed = True
+                evaluation.comment = evaluation_comment
                 evaluation.save()
 
             msg = "Parameter ratings and comments updated successfully."
@@ -131,4 +145,5 @@ class UpdateEvaluationScores(APIView):
 
         except Evaluation.DoesNotExist:
             msg = "Evaluation not found"
+
             return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)

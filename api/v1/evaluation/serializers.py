@@ -35,7 +35,19 @@ class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluation
         fields = (
-            'id', 'evaluator', 'evaluatee', 'parameters', 'is_active', 'is_evaluated', 'evaluation_scores')
+            'id',
+            'evaluator',
+            'evaluatee',
+            'parameters',
+            'expiry_days',
+            'comment',
+            'is_active',
+            'is_evaluated',
+            'is_expired',
+            'is_completed',
+            'is_expirable',
+            'evaluation_scores'
+        )
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
