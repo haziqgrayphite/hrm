@@ -85,6 +85,7 @@ class CompletedEvaluationAPIView(APIView):
 
 
 class UpdateEvaluationScores(APIView):
+
     def put(self, request):
 
         try:
@@ -140,10 +141,8 @@ class UpdateEvaluationScores(APIView):
                 evaluation.save()
 
             msg = "Parameter ratings and comments updated successfully."
-
             return Response({'message': msg}, status=status.HTTP_201_CREATED)
 
         except Evaluation.DoesNotExist:
             msg = "Evaluation not found"
-
             return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
