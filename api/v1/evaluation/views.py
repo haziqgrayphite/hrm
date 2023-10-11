@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.utils import timezone
 from django.db.models import Q
-from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
+from .models import Evaluation, Parameter, ParameterRating, OverallEvaluationScore
 from .serializers import (
     ParameterSerializer,
     ParameterRatingSerializer,
@@ -109,7 +109,11 @@ class UpdateEvaluationScores(APIView):
                 comments = data.get('comments', '')
 
                 try:
-                    evaluation_score = EvaluationScore.objects.get(evaluation=evaluation, parameter_id=parameter_id)
+                    evaluation_score = OverallEvaluationScore.objects.get(
+                        evaluation=evaluation,
+                        parameter_id=parameter_id
+                    )
+
                     serializer = EvaluationScoreUpdateSerializer(evaluation_score, data=data, partial=True)
 
                     if serializer.is_valid():
@@ -119,7 +123,7 @@ class UpdateEvaluationScores(APIView):
                     else:
                         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-                except EvaluationScore.DoesNotExist:
+                except OverallEvaluationScore.DoesNotExist:
                     msg = f"Parameter with ID {parameter_id} not found for this evaluation."
 
                     return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
@@ -130,20 +134,17 @@ class UpdateEvaluationScores(APIView):
                     parameter.save()
                 except Parameter.DoesNotExist:
                     msg = f"Parameter with ID {parameter_id} not found."
-
                     return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)
 
-            if all(evaluation_score.is_evaluated for evaluation_score in evaluation.evaluation_score.all()):
+            if all(evaluation_score.is_evaluated for evaluation_score in evaluation.overall_evaluation_scores.all()):
                 evaluation.is_evaluated = True
                 evaluation.is_completed = True
                 evaluation.comment = evaluation_comment
                 evaluation.save()
 
             msg = "Parameter ratings and comments updated successfully."
-
             return Response({'message': msg}, status=status.HTTP_201_CREATED)
 
         except Evaluation.DoesNotExist:
             msg = "Evaluation not found"
-
             return Response({'message': msg}, status=status.HTTP_404_NOT_FOUND)

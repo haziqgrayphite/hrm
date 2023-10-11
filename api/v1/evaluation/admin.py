@@ -1,11 +1,11 @@
 from django.contrib import admin
 from django import forms
-from .models import BaseEvaluation, CustomUser, Parameter, ParameterRating, Evaluation, EvaluationScore
+from .models import AssignedEvaluation, CustomUser, Parameter, ParameterRating, Evaluation, OverallEvaluationScore
 
 
 class EvaluationForm(forms.ModelForm):
     class Meta:
-        model = BaseEvaluation
+        model = AssignedEvaluation
         fields = '__all__'
 
     evaluators = forms.ModelMultipleChoiceField(
@@ -26,7 +26,7 @@ class EvaluationForm(forms.ModelForm):
     )
 
 
-class BaseEvaluationAdmin(admin.ModelAdmin):
+class AssignedEvaluationAdmin(admin.ModelAdmin):
     form = EvaluationForm
     list_display = [
         'get_evaluators',
@@ -104,7 +104,36 @@ class EvaluationAdmin(admin.ModelAdmin):
     get_parameters.short_description = 'Parameters'
 
 
-class EvaluationScoreAdmin(admin.ModelAdmin):
+class IsEvaluatedEvaluatorFilter(admin.SimpleListFilter):
+    title = 'Evaluator'
+    parameter_name = 'is_evaluated_evaluator'
+
+    def lookups(self, request, model_admin):
+
+        evaluators = Evaluation.objects.filter(evaluator__isnull=False).values_list('evaluator', 'evaluator__username').distinct()
+        evaluator_choices = [(evaluator_id, username) for evaluator_id, username in evaluators]
+        return evaluator_choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(evaluation__is_evaluated=True, evaluation__evaluator=self.value())
+
+
+class IsEvaluatedEvaluateeFilter(admin.SimpleListFilter):
+    title = 'Evaluatee'
+    parameter_name = 'is_evaluated_evaluatee'
+
+    def lookups(self, request, model_admin):
+
+        evaluatees = Evaluation.objects.filter(evaluatee__isnull=False).values_list('evaluatee', 'evaluatee__username').distinct()
+        evaluatee_choices = [(evaluatee_id, username) for evaluatee_id, username in evaluatees]
+        return evaluatee_choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(evaluation__is_evaluated=True, evaluation__evaluatee=self.value())
+
+class OverallEvaluationScoreAdmin(admin.ModelAdmin):
     list_display = [
         'evaluation',
         'parameter',
@@ -113,9 +142,23 @@ class EvaluationScoreAdmin(admin.ModelAdmin):
         'is_evaluated'
     ]
 
+    list_filter = (
+        IsEvaluatedEvaluatorFilter,
+        IsEvaluatedEvaluateeFilter
+    )
 
-admin.site.register(BaseEvaluation, BaseEvaluationAdmin)
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+admin.site.register(AssignedEvaluation, AssignedEvaluationAdmin)
 admin.site.register(Parameter, ParameterAdmin)
 admin.site.register(ParameterRating, ParameterRatingAdmin)
-admin.site.register(EvaluationScore, EvaluationScoreAdmin)
+admin.site.register(OverallEvaluationScore, OverallEvaluationScoreAdmin)
 admin.site.register(Evaluation, EvaluationAdmin)

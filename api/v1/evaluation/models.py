@@ -1,4 +1,3 @@
-import uuid
 from django.db import models
 from django.utils import timezone
 from api.v1.accounts.models import CustomUser
@@ -29,10 +28,10 @@ class Parameter(models.Model):
         return self.name
 
 
-class BaseEvaluation(models.Model):
-    evaluators = models.ManyToManyField(CustomUser, related_name="base_evaluation_evaluators")
-    evaluatees = models.ManyToManyField(CustomUser, related_name="base_evaluation_evaluatees")
-    parameters = models.ManyToManyField(Parameter, related_name="base_evaluation_parameter")
+class AssignedEvaluation(models.Model):
+    evaluators = models.ManyToManyField(CustomUser, related_name="assigned_evaluation_evaluators")
+    evaluatees = models.ManyToManyField(CustomUser, related_name="assigned_evaluation_evaluatees")
+    parameters = models.ManyToManyField(Parameter, related_name="assigned_parameter")
 
     valid_from = models.DateTimeField(auto_now_add=True)
     valid_until = models.DateTimeField()
@@ -59,7 +58,7 @@ class BaseEvaluation(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Base Evaluation ID: {self.id}, Valid from: {self.valid_from}, Valid until: {self.valid_until}"
+        return f"Assigned Evaluation ID: {self.id}, Valid from: {self.valid_from}, Valid until: {self.valid_until}"
 
 
 class Evaluation(models.Model):
@@ -86,10 +85,13 @@ class Evaluation(models.Model):
         return f"{self.evaluator} -- {self.evaluatee}"
 
 
-class EvaluationScore(models.Model):
-    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE, related_name="evaluation_score")
-    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, related_name="evaluation_scores")
-    parameter_rating = models.ForeignKey(ParameterRating, on_delete=models.CASCADE, related_name="evaluation_scores")
+class OverallEvaluationScore(models.Model):
+    evaluation = models.ForeignKey(Evaluation, on_delete=models.CASCADE, related_name="overall_evaluation_scores")
+    parameter = models.ForeignKey(Parameter, on_delete=models.CASCADE, related_name="overall_evaluation_scores")
+    parameter_rating = models.ForeignKey(
+        ParameterRating,
+        on_delete=models.CASCADE,
+        related_name="overall_evaluation_scores")
 
     is_active = models.BooleanField(default=True)
     is_evaluated = models.BooleanField(default=False)
@@ -98,4 +100,4 @@ class EvaluationScore(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"EvaluationScore {self.id} - {self.parameter_rating}"
+        return f"OverallEvaluationScore {self.id} - {self.parameter_rating}"
