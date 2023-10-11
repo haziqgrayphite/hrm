@@ -1,10 +1,10 @@
 from enum import Enum
-import uuid
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.mail import send_mail
 from django.db import models
+from api.v1.leave.models import Team
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -28,6 +28,7 @@ class RoleChoices(Enum):
     ADMIN = 'Admin'
     HR = 'HR'
     EMPLOYEE = 'Employee'
+    TEAM_LEAD = 'Team-Lead'
     NOT_SPECIFIED = 'None'
 
     @classmethod
@@ -79,6 +80,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
 
     objects = UserManager()
 

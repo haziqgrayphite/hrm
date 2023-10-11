@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django import forms
+from django.db.models import Q
+from django.db.models import Avg
 from .models import BaseEvaluation, CustomUser, Parameter, ParameterRating, Evaluation, EvaluationScore
 
 
@@ -104,14 +106,69 @@ class EvaluationAdmin(admin.ModelAdmin):
     get_parameters.short_description = 'Parameters'
 
 
+class IsEvaluatedEvaluatorFilter(admin.SimpleListFilter):
+    title = 'Evaluator'
+    parameter_name = 'is_evaluated_evaluator'
+
+    def lookups(self, request, model_admin):
+
+        evaluators = Evaluation.objects.filter(evaluator__isnull=False).values_list('evaluator', 'evaluator__username').distinct()
+        evaluator_choices = [(evaluator_id, username) for evaluator_id, username in evaluators]
+        return evaluator_choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(evaluation__is_evaluated=True, evaluation__evaluator=self.value())
+
+class IsEvaluatedEvaluateeFilter(admin.SimpleListFilter):
+    title = 'Evaluatee'
+    parameter_name = 'is_evaluated_evaluatee'
+
+    def lookups(self, request, model_admin):
+
+        evaluatees = Evaluation.objects.filter(evaluatee__isnull=False).values_list('evaluatee', 'evaluatee__username').distinct()
+        evaluatee_choices = [(evaluatee_id, username) for evaluatee_id, username in evaluatees]
+        return evaluatee_choices
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(evaluation__is_evaluated=True, evaluation__evaluatee=self.value())
+
 class EvaluationScoreAdmin(admin.ModelAdmin):
     list_display = [
         'evaluation',
         'parameter',
         'parameter_rating',
         'is_active',
-        'is_evaluated'
+        'is_evaluated',
+        'average_rating_for_evaluatee'
     ]
+
+    list_filter = (
+        IsEvaluatedEvaluatorFilter,
+        IsEvaluatedEvaluateeFilter
+    )
+
+    def average_rating_for_evaluatee(self, obj):
+
+        related_scores = EvaluationScore.objects.filter(
+            evaluation__evaluatee=obj.evaluation.evaluatee,
+            is_evaluated=True ,
+        )
+
+        avg_rating = related_scores.aggregate(Avg('parameter_rating__score'))
+        return avg_rating['parameter_rating__score__avg'] or 0
+
+    average_rating_for_evaluatee.short_description = 'Average Rating for Evaluatee'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(BaseEvaluation, BaseEvaluationAdmin)
