@@ -151,12 +151,24 @@ class EvaluationScoreAdmin(admin.ModelAdmin):
 
     def average_rating_for_evaluatee(self, obj):
 
-        avg_rating = EvaluationScore.objects.filter(
-            evaluation__evaluatee=obj.evaluation.evaluatee
-        ).aggregate(Avg('parameter_rating__score'))
+        related_scores = EvaluationScore.objects.filter(
+            evaluation__evaluatee=obj.evaluation.evaluatee,
+            is_evaluated=True ,
+        )
+
+        avg_rating = related_scores.aggregate(Avg('parameter_rating__score'))
         return avg_rating['parameter_rating__score__avg'] or 0
 
     average_rating_for_evaluatee.short_description = 'Average Rating for Evaluatee'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(BaseEvaluation, BaseEvaluationAdmin)

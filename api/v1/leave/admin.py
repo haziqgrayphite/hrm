@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import LeaveType, LeaveBalance, LeaveRequest, LeaveApproval, Salary, SalaryDeduction, LeaveAdjustment, Team
+from .models import (
+    LeaveType, LeaveBalance, LeaveRequest, LeaveApproval, Salary, SalaryDeduction,
+    LeaveAdjustment, Team, AdjustmentType
+)
 
 
 class LeaveTypeAdmin(admin.ModelAdmin):
@@ -84,6 +87,13 @@ class TeamAdmin(admin.ModelAdmin):
     ]
 
 
+class AdjustmentTypeAdmin(admin.ModelAdmin):
+    list_display = [
+        'adjustment_type_name',
+        'description'
+    ]
+
+
 admin.site.register(LeaveType, LeaveTypeAdmin)
 admin.site.register(LeaveBalance, LeaveBalanceAdmin)
 admin.site.register(LeaveRequest, LeaveRequestAdmin)
@@ -92,3 +102,4 @@ admin.site.register(Salary, SalaryAdmin)
 admin.site.register(SalaryDeduction, SalaryDeductionAdmin)
 admin.site.register(LeaveAdjustment, LeaveAdjustmentAdmin)
 admin.site.register(Team, TeamAdmin)
+admin.site.register(AdjustmentType, AdjustmentTypeAdmin)
