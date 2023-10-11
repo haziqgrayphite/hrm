@@ -157,8 +157,8 @@ ACCOUNT_LOGOUT_ON_GET = True
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Set the access token lifetime as per your requirements
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),  # Set the refresh token lifetime as per your requirements
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_REFRESH_LIFETIME_GRACE_PERIOD': timedelta(days=0),
     'SLIDING_TOKEN_TYPES': {
