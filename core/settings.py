@@ -155,6 +155,7 @@ SITE_ID = 2
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGOUT_ON_GET = True
 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # Set the access token lifetime as per your requirements
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),  # Set the refresh token lifetime as per your requirements

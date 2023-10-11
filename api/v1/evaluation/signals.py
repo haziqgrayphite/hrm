@@ -1,9 +1,9 @@
 from django.dispatch import receiver
-from .models import Evaluation, BaseEvaluation, EvaluationScore, ParameterRating
+from .models import Evaluation, AssignedEvaluation, OverallEvaluationScore, ParameterRating
 from django.db.models.signals import m2m_changed
 
 
-@receiver(m2m_changed, sender=BaseEvaluation.parameters.through)
+@receiver(m2m_changed, sender=AssignedEvaluation.parameters.through)
 def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwargs):
     if action == "post_add" and not reverse:
 
@@ -50,7 +50,7 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
         for _evaluation in evaluations:
             for _parameter in parameters:
 
-                _ = EvaluationScore.objects.create(
+                _ = OverallEvaluationScore.objects.create(
                     evaluation=_evaluation,
                     parameter=_parameter,
                     parameter_rating=default_parameter_rating

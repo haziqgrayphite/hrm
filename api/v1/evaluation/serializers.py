@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Evaluation, Parameter, ParameterRating, EvaluationScore
+from .models import Evaluation, Parameter, ParameterRating, OverallEvaluationScore
 from api.v1.accounts.serializers import CustomUserSerializer
 
 
@@ -17,7 +17,7 @@ class ParameterSerializer(serializers.ModelSerializer):
 
 class EvaluationScoreSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EvaluationScore
+        model = OverallEvaluationScore
         fields = (
             'evaluation',
             'parameter',
@@ -30,7 +30,7 @@ class EvaluationScoreSerializer(serializers.ModelSerializer):
 class EvaluationSerializer(serializers.ModelSerializer):
     evaluator = CustomUserSerializer()
     evaluatee = CustomUserSerializer()
-    evaluation_scores = EvaluationScoreSerializer(many=True, read_only=True, source='evaluation_score')
+    evaluation_scores = EvaluationScoreSerializer(many=True, read_only=True,  source='overall_evaluation_scores')
 
     class Meta:
         model = Evaluation
@@ -59,5 +59,5 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
 class EvaluationScoreUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = EvaluationScore
+        model = OverallEvaluationScore
         fields = ('parameter_rating',)
