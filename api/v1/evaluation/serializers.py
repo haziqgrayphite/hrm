@@ -46,7 +46,9 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'is_expired',
             'is_completed',
             'is_expirable',
-            'evaluation_scores'
+            'evaluation_scores',
+            'valid_until',
+            'updated_at',
         )
 
     def to_representation(self, instance):
