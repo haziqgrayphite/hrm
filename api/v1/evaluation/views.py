@@ -58,6 +58,7 @@ class PendingEvaluationAPIView(APIView):
 
 
 class CompletedEvaluationAPIView(APIView):
+
     def get(self, request):
         evaluator_id = request.query_params.get('evaluator_id')
         evaluatee_id = request.query_params.get('evaluatee_id')
@@ -80,22 +81,30 @@ class CompletedEvaluationAPIView(APIView):
             max_scores = ParameterRating.objects.aggregate(Max('score'))
             avg_rating = 0.0
 
-            for score in evaluation_scores:
-                max_parameter_rating = max_scores.get('score__max', 0)
-                avg_rating += (score.parameter_rating.score / max_parameter_rating)
+            if len(evaluation_scores) > 0:
+                for score in evaluation_scores:
+                    max_parameter_rating = max_scores.get('score__max', 0)
+                    if max_parameter_rating > 0:
+                        avg_rating += (score.parameter_rating.score / max_parameter_rating)
+                    else:
+                        avg_rating = 0.0
 
-            avg_rating = (avg_rating / len(evaluation_scores)) * 100
-            avg_rating = round(avg_rating, 2)
+                avg_rating = (avg_rating / len(evaluation_scores)) * 100
+                avg_rating = round(avg_rating, 2)
+            else:
+                avg_rating = 0.0
+
             evaluation.avg_rating = avg_rating
-
             evaluation_data = EvaluationSerializer(evaluation).data
             evaluation_data['avg_rating'] = avg_rating
+
             serialized_evaluations.append(evaluation_data)
 
         return Response(serialized_evaluations)
 
 
 class AverageEvaluationAPIView(APIView):
+
     def get(self, request):
         evaluator_id = request.query_params.get('evaluator_id')
         evaluatee_id = request.query_params.get('evaluatee_id')
@@ -118,12 +127,18 @@ class AverageEvaluationAPIView(APIView):
             max_scores = ParameterRating.objects.aggregate(Max('score'))
             avg_rating = 0.0
 
-            for score in evaluation_scores:
-                max_parameter_rating = max_scores.get('score__max', 0)
-                avg_rating += (score.parameter_rating.score / max_parameter_rating)
+            if len(evaluation_scores) > 0:
+                for score in evaluation_scores:
+                    max_parameter_rating = max_scores.get('score__max', 0)
+                    if max_parameter_rating > 0:
+                        avg_rating += (score.parameter_rating.score / max_parameter_rating)
+                    else:
+                        avg_rating = 0.0
 
-            avg_rating = (avg_rating / len(evaluation_scores)) * 100
-            avg_rating = round(avg_rating, 2)
+                avg_rating = (avg_rating / len(evaluation_scores)) * 100
+                avg_rating = round(avg_rating, 2)
+            else:
+                avg_rating = 0.0
 
             evaluation.avg_rating = avg_rating
             evaluation_data = EvaluationSerializer(evaluation).data
@@ -132,12 +147,14 @@ class AverageEvaluationAPIView(APIView):
             serialized_evaluations.append(evaluation_data)
 
         if evaluatee_id:
-            overall_avg_rating = sum(evaluation['avg_rating'] for evaluation in serialized_evaluations) / len(
-                serialized_evaluations)
-            overall_avg_rating = round(overall_avg_rating, 2)
-            return Response({'evaluations': serialized_evaluations, 'overall_avg_rating': overall_avg_rating})
+            if len(serialized_evaluations) > 0:
+                overall_avg_rating = sum(evaluation['avg_rating'] for evaluation in serialized_evaluations) / len(
+                    serialized_evaluations)
+                overall_avg_rating = round(overall_avg_rating, 2)
+            else:
+                overall_avg_rating = 0.0
 
-        return Response(serialized_evaluations)
+            return Response({'evaluations': serialized_evaluations, 'overall_avg_rating': overall_avg_rating})
 
 
 class UpdateEvaluationScores(APIView):
@@ -145,11 +162,11 @@ class UpdateEvaluationScores(APIView):
 
         try:
             evaluation_scores_data = request.data.get('evaluation_scores', [])
+            evaluation_comment = request.data.get('evaluation_comment', '')
 
             if evaluation_scores_data:
                 first_data = evaluation_scores_data[0]
                 evaluation_id = first_data.get('evaluation')
-                evaluation_comment = first_data.get('evaluation_comment')
                 evaluation = Evaluation.objects.get(id=evaluation_id)
 
                 current_datetime = timezone.now()
