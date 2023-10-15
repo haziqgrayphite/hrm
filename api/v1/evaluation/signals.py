@@ -1,4 +1,5 @@
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 from .models import Evaluation, AssignedEvaluation, OverallEvaluationScore, ParameterRating
 from django.db.models.signals import m2m_changed
 
@@ -31,6 +32,9 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
 
             for evaluatee in evaluatees:
 
+                if evaluator == evaluatee:
+                    continue
+
                 evaluation_instance = Evaluation.objects.create(
                     evaluator=evaluator,
                     evaluatee=evaluatee,
@@ -49,7 +53,6 @@ def create_evaluations(sender, instance, action, reverse, model, pk_set, **kwarg
 
         for _evaluation in evaluations:
             for _parameter in parameters:
-
                 _ = OverallEvaluationScore.objects.create(
                     evaluation=_evaluation,
                     parameter=_parameter,
