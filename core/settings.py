@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'multiselectfield',
     'api.v1.accounts.apps.AccountsConfig',
     'api.v1.evaluation.apps.EvaluationConfig',
+    'api.v1.leave.apps.LeaveConfig'
 ]
 
 MIDDLEWARE = [
