@@ -60,14 +60,31 @@ class CasualLeave(models.Model):
 
 class LeaveBalance(models.Model):
     employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leave_balances_employee')
-    sick_leave = models.ForeignKey(SickLeave, on_delete=models.CASCADE, related_name='leave_balances_sick_leave')
-    annual_leave = models.ForeignKey(AnnualLeave, on_delete=models.CASCADE, related_name='leave_balances_annual_leave')
-    casual_leave = models.ForeignKey(CasualLeave, on_delete=models.CASCADE, related_name='leave_balances_casual_leave')
+    sick_leave = models.ForeignKey(
+        SickLeave,
+        on_delete=models.SET_DEFAULT,
+        default=None,
+        related_name='leave_balances_sick_leave'
+    )
 
-    sick_leave_balance = models.PositiveIntegerField(default=0)
-    annual_leave_balance = models.PositiveIntegerField(default=0)
-    casual_leave_balance = models.PositiveIntegerField(default=0)
-    accumulative_balance = models.PositiveIntegerField(default=0)
+    annual_leave = models.ForeignKey(
+        AnnualLeave,
+        on_delete=models.SET_DEFAULT,
+        default=None,
+        related_name='leave_balances_annual_leave'
+    )
+
+    casual_leave = models.ForeignKey(
+        CasualLeave,
+        on_delete=models.SET_DEFAULT,
+        default=None,
+        related_name='leave_balances_casual_leave'
+    )
+
+    sick_leave_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    annual_leave_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    casual_leave_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    accumulative_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
     def save(self, *args, **kwargs):
 
@@ -213,4 +230,4 @@ class LeaveRequestHR(models.Model):
     is_hr_approval = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"HR Approval for {self.leave_request}"
+        return f"hr approval for {self.leave_request}"
