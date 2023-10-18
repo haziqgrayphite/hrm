@@ -1,6 +1,8 @@
 from django.db import models
 from enum import Enum
-from api.v1.leave.constants import RoleChoices
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ApprovalStatus(Enum):
@@ -14,24 +16,10 @@ class LeaveDuration(Enum):
     FULL = 'Full-Day Leave'
 
 
-class LeaveType(models.Model):
-    leave_type_name = models.CharField(max_length=50, unique=True)
-    leave_duration = models.CharField(
-        max_length=50,
-        choices=[(duration.value, duration.name) for duration in LeaveDuration],
-        unique=True
-    )
-
-    def __str__(self):
-        return self.leave_type_name
-
-
-class LeaveBalance(models.Model):
-    approvee = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name="leave_balances")
-
-    is_expirable = models.BooleanField(default=True)
+class SickLeave(models.Model):
+    leave_type = "Sick Leave"
+    quota = models.PositiveIntegerField(default=5)
     is_expired = models.BooleanField(default=False)
-    count = models.PositiveIntegerField(default=24)
     year = models.PositiveIntegerField()
     expiry_days = models.IntegerField(default=365)
 
@@ -39,91 +27,146 @@ class LeaveBalance(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Leave Entitlement - {self.approvee}, Year {self.year}"
+        return self.leave_type
+
+
+class AnnualLeave(models.Model):
+    leave_type = "Annual Leave"
+    quota = models.PositiveIntegerField(default=10)
+    is_expired = models.BooleanField(default=False)
+    year = models.PositiveIntegerField()
+    expiry_days = models.IntegerField(default=365)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.leave_type
+
+
+class CasualLeave(models.Model):
+    leave_type = "Wedding Leave"
+    quota = models.PositiveIntegerField(default=5)
+    is_expired = models.BooleanField(default=False)
+    year = models.PositiveIntegerField()
+    expiry_days = models.IntegerField(default=365)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.leave_type
+
+
+class LeaveBalance(models.Model):
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='leave_balances_employee')
+    sick_leave = models.ForeignKey(SickLeave, on_delete=models.CASCADE, related_name='leave_balances_sick_leave')
+    annual_leave = models.ForeignKey(AnnualLeave, on_delete=models.CASCADE, related_name='leave_balances_annual_leave')
+    casual_leave = models.ForeignKey(CasualLeave, on_delete=models.CASCADE, related_name='leave_balances_casual_leave')
+
+    sick_leave_balance = models.PositiveIntegerField(default=0)
+    annual_leave_balance = models.PositiveIntegerField(default=0)
+    casual_leave_balance = models.PositiveIntegerField(default=0)
+    accumulative_balance = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+
+        if self.sick_leave_balance == 0 and self.sick_leave:
+            self.sick_leave_balance = self.sick_leave.quota
+        if self.annual_leave_balance == 0 and self.annual_leave:
+            self.annual_leave_balance = self.annual_leave.quota
+        if self.casual_leave_balance == 0 and self.casual_leave:
+            self.casual_leave_balance = self.casual_leave.quota
+
+        self.accumulative_balance = self.sick_leave_balance + self.annual_leave_balance + self.casual_leave_balance
+
+        super(LeaveBalance, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Leave Balances for {self.employee.username}"
+
+
+class TeamTitle(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.title
+
+
+class TeamLead(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='team_lead_user'
+    )
+
+    description = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"Team Lead: {self.user.first_name}"
 
 
 class Team(models.Model):
-    team_name = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.team_name
-
-
-class LeaveRequest(models.Model):
+    member = models.ForeignKey(User, on_delete=models.CASCADE, )
     team_lead = models.ForeignKey(
-        'accounts.CustomUser',
+        TeamLead,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='teams_as_lead',
-        limit_choices_to={'role': RoleChoices.TEAM_LEAD.value}
+        related_name='team_team_lead'
     )
-    approvee = models.ForeignKey(
-        'accounts.CustomUser',
-        on_delete=models.CASCADE,
-        related_name="leave_requests_submitted"
-    )
-    leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE, related_name="leave_requests_leave_type")
 
+    team_title = models.ForeignKey(TeamTitle, on_delete=models.CASCADE, related_name='team_team_title')
+
+    def __str__(self):
+        return f"Team Member: {self.member}"
+
+
+class LeaveRequest(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="leave_requests_user"
+    )
+
+    sick_leave = models.ForeignKey(
+        SickLeave,
+        on_delete=models.CASCADE,
+        related_name="leave_requests_sick_leave",
+        blank=True,
+        null=True
+    )
+
+    annual_leave = models.ForeignKey(
+        AnnualLeave,
+        on_delete=models.CASCADE,
+        related_name="leave_requests_annual_leave",
+        blank=True,
+        null=True
+    )
+
+    casual_leave = models.ForeignKey(
+        CasualLeave,
+        on_delete=models.CASCADE,
+        related_name="leave_requests_casual_leave",
+        blank=True,
+        null=True
+    )
+
+    leave_duration = models.CharField(
+        max_length=50,
+        choices=[(duration.value, duration.name) for duration in LeaveDuration],
+        unique=True
+    )
     leaves_required = models.IntegerField()
-    is_expirable = models.BooleanField(default=True)
     is_expired = models.BooleanField(default=False)
-    reason = models.TextField()
-    status = models.CharField(
-        max_length=20,
-        choices=[(status.value, status.name) for status in ApprovalStatus],
-        default=ApprovalStatus.PENDING.value
-    )
+    is_team_lead_approval = models.BooleanField(default=False)
+    is_hr_approval = models.BooleanField(default=False)
+    description = models.TextField()
 
-    date_submitted = models.DateTimeField(auto_now_add=True)
-    start_date = models.DateField()
-    end_date = models.DateField()
-
-    def __str__(self):
-        return (
-            f"Leave Request by {self.approvee} ({self.status}): "
-            f"{self.leave_type} - {self.start_date} to {self.end_date}"
-        )
-
-
-class LeaveApproval(models.Model):
-    leave_request = models.ForeignKey(LeaveRequest, on_delete=models.CASCADE, related_name="approvals")
-
-    approval_date = models.DateTimeField(auto_now_add=True)
-    comments = models.TextField()
-    status = models.CharField(
-        max_length=20,
-        choices=[(status.value, status.name) for status in ApprovalStatus],
-        default=ApprovalStatus.PENDING.value
-    )
-
-    def __str__(self):
-        return f"Leave Approval for {self.leave_request} , Status: {self.status}"
-
-
-class AdjustmentType(models.Model):
-    adjustment_type_name = models.CharField(max_length=50, unique=True)
-    description = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.adjustment_type_name
-
-
-class LeaveAdjustment(models.Model):
-    leave_request = models.ForeignKey(
-        'LeaveRequest',
-        on_delete=models.CASCADE,
-        related_name="adjustments_leave_requests"
-    )
-    adjustment_type = models.ForeignKey(
-        AdjustmentType,
-        on_delete=models.CASCADE,
-        related_name="adjustments_adjustment_type"
-    )
-
-    adjustment_date = models.DateField()
-    adjustment_amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(
         max_length=20,
         choices=[(status.value, status.name) for status in ApprovalStatus],
@@ -133,30 +176,41 @@ class LeaveAdjustment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"Leave Adjustment for {self.leave_request} on {self.adjustment_date}, Status: {self.status}"
-
-
-class Salary(models.Model):
-    approvee = models.ForeignKey('accounts.CustomUser', on_delete=models.CASCADE, related_name="salaries")
-
-    year = models.PositiveIntegerField()
-    monthly_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
 
     def __str__(self):
-        return f"Salary for {self.approvee} in {self.year}"
+        return (
+            f"Leave Request by {self.user} ({self.status}): "
+            f"{self.leave_duration} from {self.start_date} to {self.end_date}"
+        )
 
 
-class SalaryDeduction(models.Model):
-    approvee = models.ForeignKey(
-        'accounts.CustomUser',
+class LeaveRequestTL(models.Model):
+    user = models.ForeignKey(TeamLead, on_delete=models.CASCADE, related_name="leave_request_tl_user")
+    leave_request = models.ForeignKey(
+        LeaveRequest,
         on_delete=models.CASCADE,
-        related_name="salary_deduction_approvee"
+        related_name="leave_request_tl_leave_request"
     )
-    salary = models.ForeignKey(Salary, on_delete=models.CASCADE, related_name="deductions")
 
-    year = models.PositiveIntegerField()
-    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    tl_comments = models.TextField()
+    is_team_lead_approval = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Salary Deduction for {self.approvee} in {self.year}"
+        return f"Team Lead Approval for {self.leave_request}"
+
+
+class LeaveRequestHR(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leave_request_hr_user")
+    leave_request = models.ForeignKey(
+        LeaveRequest,
+        on_delete=models.CASCADE,
+        related_name="leave_request_hr_leave_request"
+    )
+
+    hr_comments = models.TextField()
+    is_hr_approval = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"HR Approval for {self.leave_request}"

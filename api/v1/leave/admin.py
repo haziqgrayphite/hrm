@@ -1,105 +1,128 @@
 from django.contrib import admin
 from .models import (
-    LeaveType, LeaveBalance, LeaveRequest, LeaveApproval, Salary, SalaryDeduction,
-    LeaveAdjustment, Team, AdjustmentType
+    SickLeave,
+    AnnualLeave,
+    CasualLeave,
+    LeaveBalance,
+    Team,
+    TeamLead,
+    TeamTitle,
+    LeaveRequest,
+    LeaveRequestTL,
+    LeaveRequestHR
 )
 
 
-class LeaveTypeAdmin(admin.ModelAdmin):
+class SickLeaveAdmin(admin.ModelAdmin):
     list_display = [
-        'leave_type_name',
-        'leave_duration'
+        'leave_type',
+        'quota',
+        'is_expired',
+        'year',
+        'expiry_days'
+    ]
+
+
+class AnnualLeaveAdmin(admin.ModelAdmin):
+    list_display = [
+        'leave_type',
+        'quota',
+        'is_expired',
+        'year',
+        'expiry_days'
+    ]
+
+
+class CasualLeaveAdmin(admin.ModelAdmin):
+    list_display = [
+        'leave_type',
+        'quota',
+        'is_expired',
+        'year',
+        'expiry_days'
     ]
 
 
 class LeaveBalanceAdmin(admin.ModelAdmin):
     list_display = [
-        'approvee',
-        'count',
-        'year',
-        'is_expirable',
-        'is_expired',
-        'expiry_days'
-    ]
-
-
-class LeaveRequestAdmin(admin.ModelAdmin):
-    list_display = [
-        'get_approvers',
-        'approvee',
-        'leave_type',
-        'start_date',
-        'end_date',
-        'leaves_required',
-        'reason',
-        'status',
-        'date_submitted'
-    ]
-
-    def get_approvers(self, obj):
-        approvers = obj.approver.all()
-        approvers_names = [approver.username for approver in approvers]
-        return approvers_names
-
-    get_approvers.short_description = 'Approvers'
-
-
-class LeaveApprovalAdmin(admin.ModelAdmin):
-    list_display = [
-        'leave_request',
-        'approval_date',
-        'comments',
-        'status'
-    ]
-
-
-class SalaryAdmin(admin.ModelAdmin):
-    list_display = [
-        'approvee',
-        'year',
-        'monthly_salary'
-    ]
-
-
-class SalaryDeductionAdmin(admin.ModelAdmin):
-    list_display = [
-        'approvee',
-        'salary',
-        'year',
-        'deduction_amount'
-    ]
-
-
-class LeaveAdjustmentAdmin(admin.ModelAdmin):
-    list_display = [
-        'leave_request',
-        'adjustment_type',
-        'adjustment_date',
-        'adjustment_amount',
-        'status'
+        'employee',
+        'sick_leave',
+        'annual_leave',
+        'casual_leave',
+        'sick_leave_balance',
+        'annual_leave_balance',
+        'casual_leave_balance',
+        'accumulative_balance'
     ]
 
 
 class TeamAdmin(admin.ModelAdmin):
     list_display = [
-        'team_name',
-        'description',
+        'member',
+        'team_lead',
+        'team_title'
     ]
 
 
-class AdjustmentTypeAdmin(admin.ModelAdmin):
+class TeamLeadAdmin(admin.ModelAdmin):
     list_display = [
-        'adjustment_type_name',
+        'user',
         'description'
     ]
 
 
-admin.site.register(LeaveType, LeaveTypeAdmin)
+class TeamTitleAdmin(admin.ModelAdmin):
+    list_display = [
+        'title',
+        'description'
+    ]
+
+
+class LeaveRequestAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'sick_leave',
+        'annual_leave',
+        'casual_leave',
+        'leave_duration',
+        'leaves_required',
+        'is_expired',
+        'is_team_lead_approval',
+        'is_hr_approval',
+        'description',
+        'status',
+        'created_at',
+        'updated_at',
+        'start_date',
+        'end_date'
+    ]
+
+
+class LeaveRequestTLAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'leave_request',
+        'tl_comments',
+        'is_team_lead_approval'
+    ]
+
+
+class LeaveRequestHRAdmin(admin.ModelAdmin):
+    list_display = [
+        'user',
+        'leave_request',
+        'hr_comments',
+        'is_hr_approval'
+    ]
+
+
+admin.site.register(SickLeave, SickLeaveAdmin)
+admin.site.register(AnnualLeave, AnnualLeaveAdmin)
+admin.site.register(CasualLeave, CasualLeaveAdmin)
 admin.site.register(LeaveBalance, LeaveBalanceAdmin)
-admin.site.register(LeaveRequest, LeaveRequestAdmin)
-admin.site.register(LeaveApproval, LeaveApprovalAdmin)
-admin.site.register(Salary, SalaryAdmin)
-admin.site.register(SalaryDeduction, SalaryDeductionAdmin)
-admin.site.register(LeaveAdjustment, LeaveAdjustmentAdmin)
 admin.site.register(Team, TeamAdmin)
-admin.site.register(AdjustmentType, AdjustmentTypeAdmin)
+admin.site.register(TeamLead, TeamLeadAdmin)
+admin.site.register(TeamTitle, TeamTitleAdmin)
+admin.site.register(LeaveRequest, LeaveRequestAdmin)
+admin.site.register(LeaveRequestTL, LeaveRequestTLAdmin)
+admin.site.register(LeaveRequestHR, LeaveRequestHRAdmin)
