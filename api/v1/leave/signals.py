@@ -29,6 +29,8 @@ def create_leave_request_tl(sender, instance, created, **kwargs):
 def update_leave_request_tl(sender, instance, **kwargs):
 
     if instance.is_team_lead_approval:
+        instance.leave_request.is_team_lead_approval = True
+        instance.leave_request.save()
 
         LeaveRequestHR.objects.create(
             leave_request=instance.leave_request,
@@ -60,7 +62,6 @@ def update_leave_balance(sender, instance, created, **kwargs):
 
                 leave_request.status = "Approved"
                 leave_request.is_hr_approval = True
-                leave_request.is_team_lead_approval = True
                 leave_request.save()
 
             except LeaveBalance.DoesNotExist:

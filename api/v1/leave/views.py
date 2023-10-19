@@ -1,12 +1,14 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.decorators.csrf import csrf_exempt
 from .serializers import LeaveRequestSerializer, LeaveRequestTLSerializer, LeaveRequestHRSerializer
 from .models import LeaveRequestTL, LeaveRequestHR
 from api.v1.leave.permission import IsTeamLeadOrReadOnly
 
 
 class LeaveRequestView(APIView):
+
     def post(self, request, format=None):
 
         serializer = LeaveRequestSerializer(data=request.data)
