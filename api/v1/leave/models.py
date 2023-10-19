@@ -45,7 +45,7 @@ class AnnualLeave(models.Model):
 
 
 class CasualLeave(models.Model):
-    leave_type = "Wedding Leave"
+    leave_type = "Casual Leave"
     quota = models.PositiveIntegerField(default=5)
     is_expired = models.BooleanField(default=False)
     year = models.PositiveIntegerField()
@@ -64,21 +64,27 @@ class LeaveBalance(models.Model):
         SickLeave,
         on_delete=models.SET_DEFAULT,
         default=None,
-        related_name='leave_balances_sick_leave'
+        related_name='leave_balances_sick_leave',
+        blank=True,
+        null=True,
     )
 
     annual_leave = models.ForeignKey(
         AnnualLeave,
         on_delete=models.SET_DEFAULT,
         default=None,
-        related_name='leave_balances_annual_leave'
+        related_name='leave_balances_annual_leave',
+        blank=True,
+        null=True,
     )
 
     casual_leave = models.ForeignKey(
         CasualLeave,
         on_delete=models.SET_DEFAULT,
         default=None,
-        related_name='leave_balances_casual_leave'
+        related_name='leave_balances_casual_leave',
+        blank=True,
+        null=True,
     )
 
     sick_leave_balance = models.DecimalField(max_digits=5, decimal_places=2, default=0)
@@ -176,7 +182,6 @@ class LeaveRequest(models.Model):
     leave_duration = models.CharField(
         max_length=50,
         choices=[(duration.value, duration.name) for duration in LeaveDuration],
-        unique=True
     )
     leaves_required = models.IntegerField()
     is_expired = models.BooleanField(default=False)
@@ -204,7 +209,6 @@ class LeaveRequest(models.Model):
 
 
 class LeaveRequestTL(models.Model):
-    user = models.ForeignKey(TeamLead, on_delete=models.CASCADE, related_name="leave_request_tl_user")
     leave_request = models.ForeignKey(
         LeaveRequest,
         on_delete=models.CASCADE,
@@ -219,7 +223,6 @@ class LeaveRequestTL(models.Model):
 
 
 class LeaveRequestHR(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="leave_request_hr_user")
     leave_request = models.ForeignKey(
         LeaveRequest,
         on_delete=models.CASCADE,

@@ -100,7 +100,6 @@ class LeaveRequestAdmin(admin.ModelAdmin):
 
 class LeaveRequestTLAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
         'leave_request',
         'tl_comments',
         'is_team_lead_approval'
@@ -109,7 +108,6 @@ class LeaveRequestTLAdmin(admin.ModelAdmin):
 
 class LeaveRequestHRAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
         'leave_request',
         'hr_comments',
         'is_hr_approval'
