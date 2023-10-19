@@ -12,6 +12,7 @@ def create_leave_request_tl(sender, instance, created, **kwargs):
         user = instance.user
         try:
             team_lead = TeamLead.objects.get(user=user)
+
             if team_lead:
                 is_team_lead_approval = True
 
@@ -28,6 +29,7 @@ def create_leave_request_tl(sender, instance, created, **kwargs):
 def update_leave_request_tl(sender, instance, **kwargs):
 
     if instance.is_team_lead_approval:
+
         LeaveRequestHR.objects.create(
             leave_request=instance.leave_request,
             hr_comments="",
@@ -39,7 +41,9 @@ def update_leave_request_tl(sender, instance, **kwargs):
 def update_leave_balance(sender, instance, created, **kwargs):
 
     if not created:
+
         if instance.is_hr_approval:
+
             leave_request = instance.leave_request
             try:
                 leave_balance = LeaveBalance.objects.get(employee=leave_request.user)
@@ -58,10 +62,12 @@ def update_leave_balance(sender, instance, created, **kwargs):
                 leave_request.is_hr_approval = True
                 leave_request.is_team_lead_approval = True
                 leave_request.save()
+
             except LeaveBalance.DoesNotExist:
                 pass
             except LeaveRequest.DoesNotExist:
                 pass
+
         else:
             leave_request = instance.leave_request
             leave_request.status = "Rejected"
