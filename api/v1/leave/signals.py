@@ -6,7 +6,7 @@ from .models import LeaveRequest, LeaveRequestTL, LeaveRequestHR, LeaveBalance, 
 @receiver(post_save, sender=LeaveRequest)
 def create_leave_request_tl(sender, instance, created, **kwargs):
 
-    if created:
+    if created and instance.is_active:
         is_team_lead_approval = False
 
         user = instance.user
@@ -26,9 +26,9 @@ def create_leave_request_tl(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=LeaveRequestTL)
-def update_leave_request_tl(sender, instance, **kwargs):
+def update_leave_request_hr(sender, instance, **kwargs):
 
-    if instance.is_team_lead_approval:
+    if instance.is_team_lead_approval and instance.leave_request.is_active:
         instance.leave_request.is_team_lead_approval = True
         instance.leave_request.save()
 
@@ -42,7 +42,7 @@ def update_leave_request_tl(sender, instance, **kwargs):
 @receiver(post_save, sender=LeaveRequestHR)
 def update_leave_balance(sender, instance, created, **kwargs):
 
-    if not created:
+    if not created and instance.leave_request.is_active:
 
         if instance.is_hr_approval:
 

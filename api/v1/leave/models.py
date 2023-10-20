@@ -184,6 +184,7 @@ class LeaveRequest(models.Model):
         choices=[(duration.value, duration.name) for duration in LeaveDuration],
     )
     leaves_required = models.IntegerField()
+    is_active = models.BooleanField(default=True)
     is_expired = models.BooleanField(default=False)
     is_team_lead_approval = models.BooleanField(default=False)
     is_hr_approval = models.BooleanField(default=False)

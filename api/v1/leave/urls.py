@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
    LeaveRequestView,
    LeaveRequestTLUpdate,
-   LeaveRequestHRUpdate
+   LeaveRequestHRUpdate,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -10,8 +10,10 @@ from rest_framework_simplejwt.views import (
 )
 
 urlpatterns = [
-
     path('api/leave-requests/', LeaveRequestView.as_view(), name='leave-request-post'),
+    path('api/leave-request/<int:leave_request_id>/', LeaveRequestView.as_view(), name='leave-request-detail'),
+
+
     path(
         'api/leave-request-tl-update/<int:leave_request_tl_id>/',
         LeaveRequestTLUpdate.as_view(),
