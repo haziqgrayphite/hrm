@@ -13,7 +13,6 @@ urlpatterns = [
     path('api/leave-requests/', LeaveRequestView.as_view(), name='leave-request-post'),
     path('api/leave-request/<int:leave_request_id>/', LeaveRequestView.as_view(), name='leave-request-detail'),
 
-
     path(
         'api/leave-request-tl-update/<int:leave_request_tl_id>/',
         LeaveRequestTLUpdate.as_view(),
