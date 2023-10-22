@@ -183,7 +183,7 @@ class LeaveRequest(models.Model):
         max_length=50,
         choices=[(duration.value, duration.name) for duration in LeaveDuration],
     )
-    leaves_required = models.IntegerField()
+    leaves_required = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     is_active = models.BooleanField(default=True)
     is_expired = models.BooleanField(default=False)
     is_team_lead_approval = models.BooleanField(default=False)

@@ -11,7 +11,8 @@ class LeaveRequestView(APIView):
 
     def get(self, request, leave_request_id=None, format=None):
 
-        if leave_request_id is not None:
+        if leave_request_id:
+
             try:
                 leave_request = LeaveRequest.objects.get(id=leave_request_id)
                 serializer = LeaveRequestSerializer(leave_request)
@@ -25,6 +26,13 @@ class LeaveRequestView(APIView):
             return Response(serializer.data)
 
     def post(self, request, format=None):
+
+        data = request.data
+
+        leave_duration = data.get("leave_duration")
+
+        if leave_duration == "Half-Day Leave":
+            data.setdefault("leaves_required", 0.5)
 
         serializer = LeaveRequestSerializer(data=request.data)
 
