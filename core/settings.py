@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'multiselectfield',
     'api.v1.accounts.apps.AccountsConfig',
     'api.v1.evaluation.apps.EvaluationConfig',
-    'api.v1.leave.apps.LeaveConfig'
+    'api.v1.leave.apps.LeaveConfig',
+    'api.v1.attendance.apps.AttendanceConfig'
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Hrm-local',
+        'NAME': 'Hrm-Db',
         'USER': 'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
