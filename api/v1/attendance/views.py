@@ -83,43 +83,6 @@ class PostAttendanceAPIView(APIView):
             return Response({"message": f"An error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-#
-#
-# # class ExcelInsertAPIView(APIView):
-# #
-# #     def post(self, request):
-# #
-# #         excel_file_path = request.data.get('file_path')
-# #         print(f"Received file path: {excel_file_path}")
-# #
-# #         try:
-# #             data = pd.read_excel(excel_file_path)
-# #         except Exception as e:
-# #             print(f"Error reading Excel file: {str(e)}")
-# #             return (Response(
-# #                 {'error': 'Error reading Excel file', 'details': str(e)},
-# #                 status=status.HTTP_400_BAD_REQUEST
-# #             ))
-# #
-# #         for index, row in data.iterrows():
-# #             code = row['Code']
-# #             employee_name = row['Employee Name']
-# #             email = row['Emails']
-# #
-# #             try:
-# #
-# #                 user = User.objects.get(username__iexact=employee_name, email__iexact=email)
-# #
-# #             except User.DoesNotExist:
-# #                 return Response(
-# #                     {'error': f'User with username {employee_name} and email {email} does not exist'},
-# #                     status=status.HTTP_404_NOT_FOUND
-# #                 )
-# #
-# #             attendee, created = Attendee.objects.get_or_create(user=user, email=email, attendance_user_id=code)
-# #         return Response({'message': 'Data inserted successfully'}, status=status.HTTP_201_CREATED)
-#
-#
 class PreviousMonthAttendanceAPIView(APIView):
     def get(self, request):
 
@@ -264,3 +227,40 @@ class SyncAttendanceAPIView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#
+#
+# # class ExcelInsertAPIView(APIView):
+# #
+# #     def post(self, request):
+# #
+# #         excel_file_path = request.data.get('file_path')
+# #         print(f"Received file path: {excel_file_path}")
+# #
+# #         try:
+# #             data = pd.read_excel(excel_file_path)
+# #         except Exception as e:
+# #             print(f"Error reading Excel file: {str(e)}")
+# #             return (Response(
+# #                 {'error': 'Error reading Excel file', 'details': str(e)},
+# #                 status=status.HTTP_400_BAD_REQUEST
+# #             ))
+# #
+# #         for index, row in data.iterrows():
+# #             code = row['Code']
+# #             employee_name = row['Employee Name']
+# #             email = row['Emails']
+# #
+# #             try:
+# #
+# #                 user = User.objects.get(username__iexact=employee_name, email__iexact=email)
+# #
+# #             except User.DoesNotExist:
+# #                 return Response(
+# #                     {'error': f'User with username {employee_name} and email {email} does not exist'},
+# #                     status=status.HTTP_404_NOT_FOUND
+# #                 )
+# #
+# #             attendee, created = Attendee.objects.get_or_create(user=user, email=email, attendance_user_id=code)
+# #         return Response({'message': 'Data inserted successfully'}, status=status.HTTP_201_CREATED)
+#
