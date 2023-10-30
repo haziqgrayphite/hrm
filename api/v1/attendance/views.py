@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from zk import ZK
-from .models import Attendance, AttendanceStatus
+from .models import Attendance, AttendanceStatus, PublicHoliday
 from django.contrib.auth import get_user_model
 from .serializers import AttendanceSerializer
 from api.v1.accounts.serializers import CustomUserSerializer
@@ -84,6 +84,7 @@ class PostAttendanceAPIView(APIView):
 
 
 class PreviousMonthAttendanceAPIView(APIView):
+
     def get(self, request):
 
         try:
@@ -99,6 +100,9 @@ class PreviousMonthAttendanceAPIView(APIView):
                 check_in__date__range=[start_date, end_date],
             ).order_by('-check_out')
 
+            public_holidays = PublicHoliday.objects.values_list('date', flat=True)
+            public_holiday_dates = [date.strftime('%Y-%m-%d') for date in public_holidays]
+
             all_dates = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
             checkin_dates = [entry.check_in.date().strftime("%Y-%m-%d") for entry in attendance_entries]
@@ -109,18 +113,22 @@ class PreviousMonthAttendanceAPIView(APIView):
             missing_dates_filtered = [date for date in missing_dates if
                                       datetime.strptime(date, "%Y-%m-%d").weekday() not in [5, 6]]
 
-            print(missing_dates_filtered)
+            missing_dates_filtered = [date for date in missing_dates_filtered if date not in public_holiday_dates]
 
             for missing_date in missing_dates_filtered:
                 leave_request = LeaveRequest.objects.filter(
                     user=user,
                     start_date=missing_date,
-                    end_date=missing_date
                 ).first()
-                # if leave_request:
-            # The leave request for this missing date exists
-            # You can process it as needed
-            # print(missing_dates)
+
+                if leave_request is None:
+                    attendance = Attendance(
+                        attendance_user_id=user.attendance_machine_code,
+                        check_in=missing_date,
+                        check_out=missing_date,
+                        status='Absent'
+                    )
+                    attendance.save()
 
             for entry in attendance_entries:
 
@@ -146,6 +154,7 @@ class PreviousMonthAttendanceAPIView(APIView):
 
 
 class SyncAttendanceAPIView(APIView):
+
     def post(self, request):
 
         try:

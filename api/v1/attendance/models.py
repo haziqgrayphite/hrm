@@ -7,6 +7,7 @@ User = get_user_model()
 
 class AttendanceStatus(Enum):
     PRESENT = 'Present'
+    ABSENT = 'Absent'
     AMBIGUOUS = 'Ambiguous'
     ON_LEAVE = 'On Leave'
     WORK_FROM_HOME = 'Work from Home'
