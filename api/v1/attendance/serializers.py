@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Attendance, Attendee
+from .models import Attendance
 
 
 class AttendanceSerializer(serializers.ModelSerializer):
@@ -8,10 +8,6 @@ class AttendanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendance
-        fields = ['check_in', 'check_out']
+        fields = ['check_in', 'check_out', 'status']
 
 
-class AttendeeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Attendee
-        fields = ['user', 'email', 'attendance_user_id']

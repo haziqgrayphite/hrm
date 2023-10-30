@@ -9,6 +9,7 @@ class ApprovalStatus(Enum):
     PENDING = 'Pending'
     APPROVED = 'Approved'
     REJECTED = 'Rejected'
+    AMBIGUOUS = 'Ambiguous'
 
 
 class LeaveDuration(Enum):
