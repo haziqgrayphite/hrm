@@ -73,6 +73,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             "Unselect this instead of deleting accounts."
         ),
     )
+    attendance_machine_code = models.IntegerField(blank=True, null=True)
+
     gender = models.CharField(max_length=1, choices=GenderChoices.choices(), default=GenderChoices.NOT_SPECIFIED)
     role = models.CharField(max_length=30, choices=RoleChoices.choices(), default=RoleChoices.NOT_SPECIFIED)
 
