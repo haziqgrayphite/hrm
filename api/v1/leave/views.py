@@ -163,11 +163,13 @@ class LeaveRequestTLPending(APIView):
             user = request.user
             team_lead = TeamLead.objects.filter(user=user).first()
         except ObjectDoesNotExist:
-            return Response({"detail": "User is not a team lead."},
+            msg = "User is not a team lead."
+            return Response({"detail": msg},
                             status=status.HTTP_404_NOT_FOUND)
 
         leave_requests_tl = (LeaveRequestTL.objects.filter(
             leave_request__user__team__team_lead=team_lead,
+            leave_request__is_active=True,
             is_team_lead_approval=False
         ))
         serializer = LeaveRequestTLLSerializer(leave_requests_tl, many=True)
@@ -182,7 +184,8 @@ class LeaveRequestTLApproved(APIView):
             user = request.user
             team_lead = TeamLead.objects.filter(user=user).first()
         except ObjectDoesNotExist:
-            return Response({"detail": "User is not a team lead."},
+            msg =  "User is not a team lead."
+            return Response({"detail": msg},
                             status=status.HTTP_404_NOT_FOUND)
 
         leave_requests_tl = (LeaveRequestTL.objects.filter(
@@ -201,12 +204,13 @@ class LeaveRequestHrPending(APIView):
             user = request.user
             if user.role == 'HR':
 
-                leave_requests_hr = LeaveRequestHR.objects.filter( is_hr_approval=False)
+                leave_requests_hr = LeaveRequestHR.objects.filter(is_hr_approval=False)
                 serializer = LeaveRequestHRRSerializer(leave_requests_hr, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
-            return Response({"detail": "User is not a HR."},
+            msg = "User is not a HR."
+            return Response({"detail": msg },
                             status=status.HTTP_404_NOT_FOUND)
 
 
@@ -217,12 +221,13 @@ class LeaveRequestHrApproved(APIView):
             user = request.user
             if user.role == 'HR':
 
-                leave_requests_hr = LeaveRequestHR.objects.filter( is_hr_approval=True)
+                leave_requests_hr = LeaveRequestHR.objects.filter(is_hr_approval=True)
                 serializer = LeaveRequestHRRSerializer(leave_requests_hr, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
-            return Response({"detail": "User is not a HR."},
+            msg = "User is not a HR."
+            return Response({"detail": msg},
                             status=status.HTTP_404_NOT_FOUND)
 
 
@@ -247,5 +252,6 @@ class LeaveBalanceAPIView(APIView):
             else:
                 return Response(leave_balance_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response({'message': 'Leave balances created successfully'}, status=status.HTTP_201_CREATED)
+        msg = 'Leave balances created successfully'
+        return Response({'message': msg}, status=status.HTTP_201_CREATED)
 
