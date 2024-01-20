@@ -1,6 +1,8 @@
 from django.db import models
 from enum import Enum
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -236,3 +238,9 @@ class LeaveRequestHR(models.Model):
 
     def __str__(self):
         return f"hr approval for {self.leave_request}"
+
+
+@receiver(post_save, sender=get_user_model())
+def populate_leave_balance(sender, instance, created, **kwargs):
+    if created:
+        LeaveBalance.objects.create(employee=instance, sick_leave_id=1, annual_leave_id=1, casual_leave_id=1)
