@@ -15,6 +15,7 @@ SECRET_KEY = 'django-insecure-+wp*9)3(#-f=7v7zh&o5q4@gyz@i4otywk*mug*317zwbns1dd
 DEBUG = True
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',

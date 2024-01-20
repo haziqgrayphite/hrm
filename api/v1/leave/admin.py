@@ -80,6 +80,7 @@ class TeamTitleAdmin(admin.ModelAdmin):
 
 class LeaveRequestAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'user',
         'sick_leave',
         'annual_leave',
@@ -100,6 +101,7 @@ class LeaveRequestAdmin(admin.ModelAdmin):
 
 class LeaveRequestTLAdmin(admin.ModelAdmin):
     list_display = [
+        'id',
         'leave_request',
         'tl_comments',
         'is_team_lead_approval'

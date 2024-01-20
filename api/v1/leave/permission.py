@@ -18,7 +18,7 @@ class IsTeamLeadOrReadOnly(permissions.BasePermission):
         leave_request_user = leave_request_tl.leave_request.user
 
         try:
-            team_of_leave_request_user = Team.objects.get(member=leave_request_user)
+            team_of_leave_request_user = Team.objects.filter(member=leave_request_user).first()
 
             if team_of_leave_request_user.team_lead and requesting_user == team_of_leave_request_user.team_lead.user:
                 return True
